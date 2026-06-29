@@ -259,10 +259,8 @@ input:focus{outline:none;border-color:#1a56db;background:#fff}
 </div><!-- /content -->
 
 <script>
-// ─── CONFIGURAÇÃO JSONBIN ─────────────────────────────────────────────────────
-const BIN_ID  = '6a42c67ada38895dfe11f137';
-const API_KEY = '$2a$10$48vi8KVDS/Lu7Gi1Ku1is.vTrHsuYd3fvJk1VqPB2.NFp8fZ5b4Q.';
-const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+// ─── CONFIGURAÇÃO GOOGLE SHEETS ───────────────────────────────────────────────
+const API_URL = 'https://script.google.com/macros/s/AKfycbxPCUWNi09zuWG4ujPERbTOaYck4oCdfT-FqrtWIpl_LzxEn074qT9WZLlI4Ok-lqMV8Q/exec';
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const fmt = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -281,13 +279,11 @@ let cartaoSelecionado = null;
 let filtroAtivo = 'todos';
 let saving = false;
 
-// ─── JSONBIN: LER ─────────────────────────────────────────────────────────────
+// ─── SHEETS: LER ─────────────────────────────────────────────────────────────
 async function carregarDrive(manual = false) {
   setSyncStatus('loading', '⏳ Carregando...');
   try {
-    const res = await fetch(`${BIN_URL}/latest`, {
-      headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': 'false' }
-    });
+    const res = await fetch(API_URL);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const dados = await res.json();
     gastosMensais = dados.gastosMensais || [];
@@ -298,7 +294,7 @@ async function carregarDrive(manual = false) {
     popularSelectMes();
     if(manual) alert('Dados recarregados com sucesso!');
   } catch(e) {
-    console.error('Erro ao carregar JSONBin:', e);
+    console.error('Erro ao carregar:', e);
     const local = localStorage.getItem('carteira_local_backup');
     if(local) {
       const dados = JSON.parse(local);
@@ -311,26 +307,22 @@ async function carregarDrive(manual = false) {
   }
 }
 
-// ─── JSONBIN: SALVAR ──────────────────────────────────────────────────────────
+// ─── SHEETS: SALVAR ───────────────────────────────────────────────────────────
 async function salvarDrive() {
   if(saving) return;
   saving = true;
   setSyncStatus('loading', '⏳ Salvando...');
   localStorage.setItem('carteira_local_backup', JSON.stringify({ gastosMensais, gastosDiarios }));
   try {
-    const res = await fetch(BIN_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY
-      },
+    const res = await fetch(API_URL, {
+      method: 'POST',
       body: JSON.stringify({ gastosMensais, gastosDiarios, ultimaAtualizacao: new Date().toISOString() })
     });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     setSyncStatus('ok', '✅ Salvo');
     atualizarUltimoSync();
   } catch(e) {
-    console.error('Erro ao salvar JSONBin:', e);
+    console.error('Erro ao salvar:', e);
     setSyncStatus('err', '⚠️ Erro ao salvar');
   }
   saving = false;
