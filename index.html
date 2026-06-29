@@ -450,7 +450,7 @@ function renderizarTudo() {
   const mesAtual = agora.getMonth(), anoAtual = agora.getFullYear(), hoje = agora.toDateString();
   document.getElementById('mesBadge').textContent = `${MESES[mesAtual]} ${anoAtual}`;
   document.getElementById('dataHoraAtual').textContent = agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('driveFileIdDisplay').textContent = BIN_ID;
+  document.getElementById('driveFileIdDisplay').textContent = API_URL;
 
   // Fixos
   let totalFixo = 0;
