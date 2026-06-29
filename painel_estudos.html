@@ -274,26 +274,20 @@
 </div>
 
 <script>
-  // ─── JSONBIN SYNC ──────────────────────────────────────────────────────────
-  const BIN_ID  = '6a42cb0ff5f4af5e29439b0a';
-  const API_KEY = '$2a$10$48vi8KVDS/Lu7Gi1Ku1is.vTrHsuYd3fvJk1VqPB2.NFp8fZ5b4Q.';
-  const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  // ─── GOOGLE SHEETS SYNC ────────────────────────────────────────────────────
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxPCUWNi09zuWG4ujPERbTOaYck4oCdfT-FqrtWIpl_LzxEn074qT9WZLlI4Ok-lqMV8Q/exec';
 
-  // DB local em memória — espelho do JSONBin
   let db = {};
   let syncTimer = null;
   let syncPending = false;
 
-  // Substitui localStorage.getItem
   function lsGet(key) {
     return db[key] !== undefined ? String(db[key]) : null;
   }
-  // Substitui localStorage.setItem — agenda sync automático
   function lsSet(key, value) {
     db[key] = value;
     agendarSync();
   }
-  // Substitui localStorage.removeItem
   function lsRemove(key) {
     delete db[key];
     agendarSync();
@@ -302,19 +296,19 @@
   function agendarSync() {
     syncPending = true;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(salvarBin, 1500); // salva 1.5s após última alteração
+    syncTimer = setTimeout(salvarBin, 1500);
   }
 
   async function salvarBin() {
     try {
       setSyncBadge('⏳ Salvando...');
-      await fetch(BIN_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+      await fetch(API_URL, {
+        method: 'POST',
         body: JSON.stringify(db)
       });
       syncPending = false;
       setSyncBadge('✅ Sync');
+      localStorage.setItem('estudos_backup', JSON.stringify(db));
     } catch(e) {
       setSyncBadge('⚠️ Offline');
     }
@@ -323,30 +317,23 @@
   async function carregarBin() {
     setSyncBadge('⏳ Carregando...');
     try {
-      const res = await fetch(`${BIN_URL}/latest`, {
-        headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': 'false' }
-      });
+      const res = await fetch(API_URL);
       if(!res.ok) throw new Error(res.status);
       db = await res.json();
       setSyncBadge('✅ Sync');
+      localStorage.setItem('estudos_backup', JSON.stringify(db));
     } catch(e) {
-      // fallback para localStorage do navegador
-      const bkp = lsGet('estudos_backup');
+      const bkp = localStorage.getItem('estudos_backup');
       if(bkp) db = JSON.parse(bkp);
       setSyncBadge('⚠️ Offline');
     }
-    // Persiste backup local
-    lsSet('estudos_backup', JSON.stringify(db));
   }
 
   function setSyncBadge(txt) {
     const el = document.getElementById('syncBadge');
     if(el) el.textContent = txt;
   }
-
-  // Salva backup local junto com cada sync
-  const _salvarBinOrig = salvarBin;
-  // ─── FIM JSONBIN SYNC ──────────────────────────────────────────────────────
+  // ─── FIM GOOGLE SHEETS SYNC ────────────────────────────────────────────────
 
   const DAY_NAMES = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
   const DAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
