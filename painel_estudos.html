@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Operacional & Diário de Estudos ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  
+  /* --- BACKGROUND 1 (Fundo da Página) --- */
+  body{
+    background-color:#101726;
+    background-image: linear-gradient(rgba(16, 23, 38, 0.88), rgba(16, 23, 38, 0.88)), url('concurso-policia-penal-pb.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family:'Nunito',sans-serif;
+    min-height:100vh;
+    padding:1rem;
+    color:#f3f4f6
+  }
+  
+  .diary{max-width:720px;margin:0 auto;padding:0.5rem}
+
+  /* Cabeçalho Tático */
+  .cover{background:linear-gradient(135deg,rgba(30,41,59,0.9),rgba(15,23,42,0.9),rgba(2,6,23,0.9));border-radius:18px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden;border:2px solid #334155;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+  .cover h1{font-family:'Anonymous Pro',monospace;font-size:2rem;color:#e2e8f0;margin-bottom:0.3rem;letter-spacing:2px;font-weight:700}
+  .cover .badge{background:#eab308;color:#0f172a;font-size:0.75rem;font-weight:800;padding:3px 10px;border-radius:4px;display:inline-block;text-transform:uppercase;margin-bottom:0.8rem;letter-spacing:1px}
+  .cover .subtitle{font-size:1rem;color:#94a3b8}
+
+  /* Cronômetro Regressivo */
+  .countdown-box{background:rgba(30,41,59,0.9);border:1px solid #eab308;border-radius:12px;padding:1rem;margin-bottom:1.5rem;text-align:center}
+  .countdown-title{font-size:0.85rem;color:#eab308;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem}
+  .countdown-time{font-family:'Anonymous Pro',monospace;font-size:1.6rem;font-weight:700;color:#fff}
+
+  /* Seções */
+  .section{background:rgba(30,41,59,0.95);border:1px solid #334155;border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+  .section-title{font-family:'Anonymous Pro',monospace;font-size:1.3rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+  .gold-title{color:#eab308}
+  .blue-title{color:#38bdf8}
+  .green-title{color:#4ade80}
+
+  /* --- BACKGROUND 2 (Fundo da Área de Relatório) --- */
+  .diario-operacional-bg {
+    background-image: linear-gradient(rgba(30, 41, 59, 0.85), rgba(30, 41, 59, 0.85)), url('1.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Day bar */
+  .date-bar{display:flex;gap:6px;margin-bottom:0.6rem;justify-content:center;flex-wrap:wrap}
+  .day-btn{width:46px;height:52px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.9);color:#94a3b8;font-size:0.75rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all 0.15s}
+  .day-btn:hover{background:#1e293b;border-color:#64748b}
+  .day-btn.active{background:#eab308;color:#0f172a;border-color:#eab308;box-shadow:0 0 10px rgba(234,179,8,0.3)}
+  .day-btn.today-marker{border:1.5px dashed #eab308}
+  .day-label{font-size:0.7rem;text-transform:uppercase}
+  .current-day-label{text-align:center;font-size:0.95rem;color:#eab308;font-weight:700;margin-bottom:1.2rem;font-family:'Anonymous Pro',monospace; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);}
+
+  /* Tracker de Metas */
+  .hcell{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:#0f172a;font-weight:800;margin:auto;background:#334155;transition:all 0.12s}
+  .hcell:hover{background:#475569}
+  .hchecked{background:#4ade80;color:#0f172a}
+
+  /* Pomodoro e Tempo Manual */
+  .pomodoro-container{display:flex; flex-direction:column; background:rgba(15,23,42,0.8);padding:1rem;border-radius:10px;border:1px solid #334155}
+  .pomo-time{font-family:'Anonymous Pro',monospace;font-size:2.5rem;font-weight:700;color:#fff; text-align:center;}
+  .pomo-btn{padding:0.5rem 1.2rem;border-radius:6px;border:none;background:#eab308;color:#0f172a;font-weight:700;cursor:pointer;text-transform:uppercase;font-size:0.8rem;transition:background 0.15s}
+  .pomo-btn:hover{background:#ca8a04}
+  .pomo-btn.btn-reset{background:#475569;color:#fff}
+  .pomo-btn.btn-reset:hover{background:#334155}
+  .manual-time-input {width: 70px; padding: 6px; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: #fff; font-family:'Nunito'; text-align:center;}
+  .manual-time-input:focus {outline: none; border-color: #38bdf8;}
+
+  /* Gráficos de Tempo Estudado */
+  .chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 160px; background: rgba(15,23,42,0.8); border-radius: 10px; border: 1px solid #334155; padding: 15px 10px 5px 10px; margin-top: 10px; }
+  .chart-bar-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 12%; }
+  .chart-bar { width: 100%; background: #38bdf8; border-radius: 4px 4px 0 0; transition: height 0.5s; min-height: 2px; }
+  .chart-label { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; }
+  .chart-val { font-size: 0.7rem; color: #eab308; margin-bottom: 3px; font-weight: bold; text-align: center;}
+
+  /* Flashcards Dinâmicos */
+  .flash-box{display:flex; flex-direction: column; align-items: stretch; gap: 10px; background:rgba(15,23,42,0.8);padding:1rem;border-radius:10px;border:1px solid #334155}
+  .flash-select {flex:1; padding: 10px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid #475569; font-family:'Nunito'; font-size: 0.9rem;}
+  .flash-select:focus {outline: none; border-color: #38bdf8;}
+  .flash-btn-add {padding: 10px 15px; border-radius: 6px; border: none; background: #38bdf8; color: #0f172a; font-weight: 700; cursor: pointer; transition: background 0.15s;}
+  .flash-btn-add:hover {background: #0ea5e9;}
+  .flash-count{font-family:'Anonymous Pro',monospace;font-size:1.8rem;font-weight:700;color:#38bdf8;}
+  .flash-list-item {display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:5px; padding-top:5px; font-size: 0.85rem; color:#cbd5e1;}
+
+  /* Edital / Matérias */
+  .edital-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem}
+  .edit-concurso-btn{background:transparent;border:1px solid #475569;color:#94a3b8;padding:4px 10px;border-radius:6px;font-size:0.75rem;cursor:pointer; transition: 0.2s;}
+  .edit-concurso-btn:hover{border-color:#eab308;color:#fff}
+  .subject-block{border:1px solid #334155;border-radius:8px;margin-bottom:0.6rem;overflow:hidden}
+  .subject-block-header{background:rgba(15,23,42,0.9);padding:0.65rem 1rem;font-weight:700;font-size:0.9rem;color:#38bdf8;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+  .subject-block-header:hover{background:#1e293b}
+  .subject-block-content{display:none;padding:0.6rem;background:rgba(17,24,39,0.9)}
+  .subject-block-content.open{display:block}
+  .topic-item{display:flex;align-items:flex-start;gap:10px;padding:0.45rem;border-bottom:1px solid #1f2937;line-height:1.4}
+  .topic-item:last-child{border-bottom:none}
+  .topic-item input[type=checkbox]{width:16px;height:16px;accent-color:#eab308;cursor:pointer;margin-top:2px;flex-shrink:0}
+  .topic-item label{font-size:0.82rem;cursor:pointer;color:#e2e8f0;flex:1}
+  .priority-tag{font-size:0.65rem;font-weight:800;padding:1px 4px;border-radius:3px;margin-left:5px;text-transform:uppercase}
+  .p-alta{background:#ef4444;color:#fff}
+  .p-media{background:#f97316;color:#fff}
+
+  /* Humor e Anotações avançadas */
+  .mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:0.8rem}
+  .mood-btn{padding:0.45rem 1rem;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.9);font-size:1.2rem;cursor:pointer;transition:all 0.15s; color:white;}
+  .mood-btn:hover{transform:scale(1.1)}
+  .mood-btn.selected{border-color:#eab308;background:#1e293b;transform:scale(1.1);box-shadow:0 0 8px rgba(234,179,8,0.3)}
+  .notes-area{width:100%;border:1px solid #475569;border-radius:10px;padding:0.8rem;font-size:0.95rem;color:#f3f4f6;background:rgba(15,23,42,0.7);resize:vertical;min-height:100px;line-height:1.6;margin-top:0.7rem;font-family:inherit; backdrop-filter: blur(2px);}
+  .notes-area:focus{outline:none;border-color:#eab308}
+  .save-btn{margin-top:0.8rem;padding:0.55rem 1.6rem;border-radius:6px;border:none;background:#eab308;color:#0f172a;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.15s;text-transform:uppercase}
+  .save-btn:hover{background:#ca8a04}
+  .saved-msg{font-size:0.85rem;color:#4ade80;margin-top:0.4rem;display:none;font-weight:600}
+
+  /* Arquivo de Anotações Histórico */
+  .archive-section{background:rgba(30,41,59,0.95);border:1px solid #334155;border-radius:14px;padding:1.3rem;margin-bottom:1.2rem}
+  .month-folder{border:1px solid #334155;border-radius:10px;margin-bottom:0.6rem;overflow:hidden}
+  .month-folder-header{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1rem;background:rgba(15,23,42,0.9);cursor:pointer;user-select:none}
+  .month-folder-header:hover{background:#1e293b}
+  .folder-name{font-family:'Anonymous Pro',monospace;font-size:1rem;color:#eab308;font-weight:700}
+  .folder-count{font-size:0.7rem;color:#0f172a;background:#eab308;padding:2px 8px;border-radius:4px;font-weight:700}
+  .folder-body{display:none;padding:0.5rem;background:rgba(17,24,39,0.9)}
+  .folder-body.open{display:block}
+  .note-card{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;cursor:pointer;position:relative;}
+  .note-card:last-child{margin-bottom:0}
+  .note-date{font-size:0.75rem;color:#38bdf8;font-weight:700}
+  .note-preview{font-size:0.85rem;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+  .note-full{display:none;margin-top:0.5rem;font-size:0.9rem;color:#e2e8f0;line-height:1.5;white-space:pre-wrap;border-top:1px solid #334155;padding-top:0.5rem}
+  .note-card.expanded .note-full{display:block}
+  .note-card.expanded .note-preview{display:none}
+  .no-notes-msg{font-size:0.85rem;color:#64748b;font-style:italic}
+  .past-notice{background:rgba(28,37,65,0.9);border:1px solid #3b82f6;border-radius:8px;padding:0.5rem 0.8rem;margin-bottom:0.8rem;font-size:0.8rem;color:#93c5fd;display:none}
+  .past-notice.visible{display:block}
+
+  /* Botão Excluir Missão */
+  .btn-delete-missao {background-color: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: background 0.15s;}
+  .btn-delete-missao:hover {background-color: #dc2626;}
+</style>
+</head>
+<body>
+<div class="diary">
+
+  <div class="cover">
+    <div class="badge">Missão Dada é Missão Cumprida</div>
+    <h1>PAINEL DE ESTUDOS TÁTICO</h1>
+    <div class="subtitle">Constância, Disciplina e Foco Diário ⚡</div>
+    <div style="margin-top:8px"><span id="syncBadge" style="background:rgba(255,255,255,0.1);color:#94a3b8;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px">⏳ Carregando...</span></div>
+  </div>
+
+  <div class="countdown-box">
+    <div class="countdown-title" id="concursoTituloDisplay">🏁 Prova: Agente de Trânsito</div>
+    <div class="countdown-time" id="countdownTimer">Carregando contagem tática...</div>
+  </div>
+
+  <div class="date-bar" id="dayBar"></div>
+  <div class="current-day-label" id="currentDayLabel"></div>
+
+  <div class="section">
+    <div class="section-title blue-title">⏱️ Gerenciador de Tempo: Pomodoro</div>
+    <div class="pomodoro-container">
+      
+      <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom: 15px;">
+        <div class="pomo-time" id="pomoDisplay">25:00</div>
+        <div style="display:flex; gap:8px">
+          <button class="pomo-btn" id="btnStart" onclick="togglePomodoro()">Iniciar</button>
+          <button class="pomo-btn btn-reset" onclick="resetPomodoro()">Reset</button>
+        </div>
+      </div>
+
+      <div style="border-top: 1px dashed #334155; padding-top: 15px; display:flex; gap:10px; align-items:center; justify-content:center;">
+        <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">Registro Manual:</span>
+        <input type="number" id="manualTimeInput" class="manual-time-input" placeholder="Min...">
+        <button class="pomo-btn" style="background: #38bdf8;" onclick="addManualTime()">+ Lançar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title gold-title">📈 Progresso Global: Missão Até a Prova</div>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:0.8rem;">Contabilização de todo o tempo de estudo (Pomodoro + Manual) voltado para bater sua meta final:</p>
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 8px;">
+      <span id="totalStudyDisplay" style="font-weight:800; font-size:1.4rem; color:#4ade80;">0h 0m</span>
+      <button class="edit-concurso-btn" onclick="setMetaHoras()">Definir Meta 🎯</button>
+    </div>
+    
+    <div style="width:100%; background:#1e293b; border-radius:8px; height:22px; overflow:hidden; border:1px solid #475569; position:relative;">
+      <div id="globalProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #38bdf8, #4ade80); transition:width 0.8s ease-in-out;"></div>
+    </div>
+    <div style="font-size:0.75rem; color:#94a3b8; text-align:right; margin-top:5px;" id="metaDisplay">Meta da Aprovação: 300h</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title blue-title">📊 Frequência Tática (Últimos 7 Dias)</div>
+    <div class="chart-container" id="studyChart">
+        </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title blue-title">🗂️ Flashcards por Matéria</div>
+    <div class="past-notice" id="flashNotice">👀 Visualizando outro dia — os dados refletem a data selecionada.</div>
+    <div class="flash-box">
+      <div style="display: flex; gap: 10px;">
+          <select id="flashSubject" class="flash-select">
+              <option value="Língua Portuguesa">Língua Portuguesa</option>
+              <option value="Informática">Informática</option>
+              <option value="História de C. Grande">História de C. Grande</option>
+              <option value="Legislação e Ética">Legislação e Ética</option>
+              <option value="Dir. Administrativo">Dir. Administrativo</option>
+              <option value="Dir. Constitucional">Dir. Constitucional</option>
+              <option value="Legislação de Trânsito">Legislação de Trânsito</option>
+          </select>
+          <button class="flash-btn-add" onclick="addSubjectFlashcard()">Add +1</button>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+          <span style="font-size:0.95rem;font-weight:600">Cartões Estudados Hoje:</span>
+          <span class="flash-count" id="flashDisplayTotal">0</span>
+      </div>
+      <div id="flashSubjectList" style="display:flex; flex-direction:column; margin-top: 5px;">
+          </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="edital-header-row">
+      <div class="section-title gold-title" style="margin-bottom:0" id="editalTitle">📋 Edital Verticalizado: STTP Campina Grande</div>
+      <button class="edit-concurso-btn" onclick="alterarConcurso()">Alterar Foco ⚙️</button>
+    </div>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:0.8rem">Toque nas disciplinas para expandir e gerenciar cada tópico específico do conteúdo programático:</p>
+    <div id="editalContainer">
+      </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title green-title" id="trackerTitle">🌱 Metas Operacionais & Saudáveis</div>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:0.8rem;">Clique no dia para registrar o cumprimento da meta:</p>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+      <table id="habitTable" style="border-collapse:collapse;min-width:620px;width:100%;font-size:0.7rem;">
+        <thead>
+          <tr id="tableHeaderRow"></tr>
+        </thead>
+        <tbody id="habitTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section diario-operacional-bg">
+    <div class="section-title gold-title">💀 Relatório Diário / Estado de Prontidão</div>
+    <div class="past-notice" id="moodNotice">👀 Visualizando outro dia — o relatório pertence ao dia selecionado.</div>
+    <div class="mood-row" id="moodRow">
+      <button class="mood-btn" onclick="setMood(this,'⚡ Forte')">⚡ Forte</button>
+      <button class="mood-btn" onclick="setMood(this,'💪 Operacional')">💪 Operacional</button>
+      <button class="mood-btn" onclick="setMood(this,'😌 Calmo')">😌 Calmo</button>
+      <button class="mood-btn" onclick="setMood(this,'😔 Fadiga')">😔 Fadiga</button>
+      <button class="mood-btn" onclick="setMood(this,'🧠 Focado')">🧠 Focado</button>
+    </div>
+    <textarea class="notes-area" id="notesArea" placeholder="Escreva o andamento da sua missão, dificuldades doutrinárias, o que aprendeu hoje ou insights de estudo..."></textarea>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <button class="save-btn" onclick="saveEntry()">Arquivar Relatório 💾</button>
+      <span class="saved-msg" id="savedMsg">✅ Missão registrada e salva!</span>
+    </div>
+  </div>
+
+  <div class="archive-section" id="archiveSection">
+    <div class="section-title gold-title">📁 Arquivo Relatório de Missões</div>
+    <div id="archiveFolders"><p class="no-notes-msg">Nenhum relatório arquivado ainda.</p></div>
+  </div>
+
+</div>
+
+<script>
+  // ─── JSONBIN SYNC ──────────────────────────────────────────────────────────
+  const BIN_ID  = '6a42cb0ff5f4af5e29439b0a';
+  const API_KEY = '$2a$10$48vi8KVDS/Lu7Gi1Ku1is.vTrHsuYd3fvJk1VqPB2.NFp8fZ5b4Q.';
+  const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+  // DB local em memória — espelho do JSONBin
+  let db = {};
+  let syncTimer = null;
+  let syncPending = false;
+
+  // Substitui localStorage.getItem
+  function lsGet(key) {
+    return db[key] !== undefined ? String(db[key]) : null;
+  }
+  // Substitui localStorage.setItem — agenda sync automático
+  function lsSet(key, value) {
+    db[key] = value;
+    agendarSync();
+  }
+  // Substitui localStorage.removeItem
+  function lsRemove(key) {
+    delete db[key];
+    agendarSync();
+  }
+
+  function agendarSync() {
+    syncPending = true;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(salvarBin, 1500); // salva 1.5s após última alteração
+  }
+
+  async function salvarBin() {
+    try {
+      setSyncBadge('⏳ Salvando...');
+      await fetch(BIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+        body: JSON.stringify(db)
+      });
+      syncPending = false;
+      setSyncBadge('✅ Sync');
+    } catch(e) {
+      setSyncBadge('⚠️ Offline');
+    }
+  }
+
+  async function carregarBin() {
+    setSyncBadge('⏳ Carregando...');
+    try {
+      const res = await fetch(`${BIN_URL}/latest`, {
+        headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': 'false' }
+      });
+      if(!res.ok) throw new Error(res.status);
+      db = await res.json();
+      setSyncBadge('✅ Sync');
+    } catch(e) {
+      // fallback para localStorage do navegador
+      const bkp = lsGet('estudos_backup');
+      if(bkp) db = JSON.parse(bkp);
+      setSyncBadge('⚠️ Offline');
+    }
+    // Persiste backup local
+    lsSet('estudos_backup', JSON.stringify(db));
+  }
+
+  function setSyncBadge(txt) {
+    const el = document.getElementById('syncBadge');
+    if(el) el.textContent = txt;
+  }
+
+  // Salva backup local junto com cada sync
+  const _salvarBinOrig = salvarBin;
+  // ─── FIM JSONBIN SYNC ──────────────────────────────────────────────────────
+
+  const DAY_NAMES = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const DAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const MONTH_NAMES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  const todayDate = toKey(new Date());
+  let activeDate = todayDate;
+
+  function toKey(d) {
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function sKey(date, field) {
+    return 'tatico_' + date + '_' + field;
+  }
+
+  // --- CONTAGEM REGRESSIVA ---
+  function updateCountdown() {
+    const targetStr = lsGet('tatico_concurso_data') || '2026-08-30T14:00:00';
+    const titulo = lsGet('tatico_concurso_nome') || 'Agente de Trânsito';
+    document.getElementById('concursoTituloDisplay').textContent = '🏁 Prova: ' + titulo;
+    
+    const target = new Date(targetStr).getTime();
+    const now = new Date().getTime();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdownTimer').textContent = "Dia Q! Operação Iniciada! 🦅";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('countdownTimer').textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+  setInterval(updateCountdown, 1000);
+
+  function alterarConcurso() {
+    const novoNome = prompt("Digite o novo concurso alvo:", "Polícia Penal PB");
+    if(!novoNome) return;
+    const novaData = prompt("Data da prova (AAAA-MM-DD):", "2026-11-15");
+    if(!novaData) return;
+
+    lsSet('tatico_concurso_nome', novoNome);
+    lsSet('tatico_concurso_data', novaData + 'T14:00:00');
+    lsSet('tatico_usa_custom_edital', 'true');
+    renderEdital();
+    updateCountdown();
+  }
+
+  // --- TIMER POMODORO E TEMPO MANUAL ---
+  let pomoInterval = null;
+  let pomoSeconds = 25 * 60;
+  let pomoRunning = false;
+
+  function togglePomodoro() {
+    const btn = document.getElementById('btnStart');
+    if(pomoRunning) {
+      clearInterval(pomoInterval);
+      btn.textContent = "Iniciar";
+      pomoRunning = false;
+    } else {
+      pomoRunning = true;
+      btn.textContent = "Pausar";
+      pomoInterval = setInterval(() => {
+        if(pomoSeconds <= 0) {
+          clearInterval(pomoInterval);
+          alert("Gás total! Intervalo operacional liberado.");
+          
+          let currentDayTime = parseInt(lsGet(sKey(todayDate, 'studyTime')) || 0);
+          lsSet(sKey(todayDate, 'studyTime'), currentDayTime + 25);
+          
+          renderChart();
+          renderGlobalProgress();
+          resetPomodoro();
+          return;
+        }
+        pomoSeconds--;
+        renderPomodoro();
+      }, 1000);
+    }
+  }
+  function resetPomodoro() {
+    clearInterval(pomoInterval);
+    pomoSeconds = 25 * 60;
+    pomoRunning = false;
+    document.getElementById('btnStart').textContent = "Iniciar";
+    renderPomodoro();
+  }
+  function renderPomodoro() {
+    const m = String(Math.floor(pomoSeconds / 60)).padStart(2,'0');
+    const s = String(pomoSeconds % 60).padStart(2,'0');
+    document.getElementById('pomoDisplay').textContent = `${m}:${s}`;
+  }
+
+  function addManualTime() {
+    const input = document.getElementById('manualTimeInput');
+    const mins = parseInt(input.value);
+    
+    if(isNaN(mins) || mins <= 0) {
+        alert("Guerreiro, insira um valor válido em minutos.");
+        return;
+    }
+    
+    // Adiciona o tempo ao dia ATIVAMENTE selecionado
+    let currentDayTime = parseInt(lsGet(sKey(activeDate, 'studyTime')) || 0);
+    lsSet(sKey(activeDate, 'studyTime'), currentDayTime + mins);
+    
+    input.value = '';
+    renderChart();
+    renderGlobalProgress();
+    
+    // Mostra mensagem de sucesso temporária no botão de salvar relatório (só pra avisar)
+    const msg = document.getElementById('savedMsg');
+    msg.textContent = `✅ +${mins}m lançados no dia selecionado!`;
+    msg.style.display='inline';
+    setTimeout(() => msg.style.display='none', 3500);
+  }
+
+  // --- PROGRESSO GLOBAL DE HORAS (Até a prova) ---
+  function renderGlobalProgress() {
+    let totalMins = 0;
+    
+    // Varre todo o localStorage atrás das chaves de tempo estudado
+    for(let i=0; i<Object.keys(db).length; i++) {
+        const k = Object.keys(db)[i];
+        if(k && k.startsWith('tatico_') && k.endsWith('_studyTime')) {
+            totalMins += parseInt(lsGet(k) || 0);
+        }
+    }
+    
+    const hours = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    
+    // Atualiza o Display
+    document.getElementById('totalStudyDisplay').textContent = `${hours}h ${mins}m Estudados`;
+    
+    // Puxa a meta
+    let metaHoras = parseInt(lsGet('tatico_meta_horas')) || 300;
+    document.getElementById('metaDisplay').textContent = `Meta da Aprovação: ${metaHoras}h`;
+    
+    // Calcula a % da barra
+    let pct = (hours / metaHoras) * 100;
+    if(pct > 100) pct = 100; // Trava a barra em 100% pra não bugar o CSS
+    
+    document.getElementById('globalProgressBar').style.width = pct + '%';
+  }
+
+  function setMetaHoras() {
+    const atual = lsGet('tatico_meta_horas') || "300";
+    const novaMeta = prompt("Defina sua meta de horas totais de estudo até a prova:", atual);
+    const parsed = parseInt(novaMeta);
+    if(!isNaN(parsed) && parsed > 0) {
+        lsSet('tatico_meta_horas', parsed);
+        renderGlobalProgress();
+    }
+  }
+
+  // --- DIAS CORRIDOS E GRÁFICO (Últimos 7 dias) ---
+  function getRollingDates() {
+    const now = new Date();
+    const dates = [];
+    for(let i=6; i>=0; i--){
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      dates.push(d);
+    }
+    return dates;
+  }
+  const weekDates = getRollingDates();
+
+  function buildDayBar() {
+    const bar = document.getElementById('dayBar');
+    bar.innerHTML = '';
+    weekDates.forEach((d) => {
+      const key = toKey(d);
+      const btn = document.createElement('button');
+      btn.className = 'day-btn';
+      if(key === todayDate) btn.classList.add('today-marker');
+      if(key === activeDate) btn.classList.add('active');
+
+      const cardsEstudados = parseInt(lsGet(sKey(key, 'flashcards')) || 0);
+      const dayShort = DAY_SHORT[d.getDay()];
+      const dayNum = d.getDate();
+
+      btn.innerHTML = `<span class="day-label">${dayShort}</span><span style="font-size:0.8rem; font-weight:800">${dayNum}</span><span style="font-size:0.6rem; color:#38bdf8">${cardsEstudados > 0 ? cardsEstudados+'🗂️':''}</span>`;
+      btn.addEventListener('click', () => switchDay(key));
+      bar.appendChild(btn);
+    });
+  }
+
+  function switchDay(dateKey) {
+    activeDate = dateKey;
+    buildDayBar();
+
+    const isToday = dateKey === todayDate;
+    const d = new Date(dateKey+'T12:00:00');
+    document.getElementById('currentDayLabel').textContent = (isToday ? '⚡ Operação Hoje — ' : '⚡ Dia de Missão — ') + DAY_NAMES[d.getDay()] + ', ' + d.toLocaleDateString('pt-BR');
+
+    document.getElementById('flashNotice').classList.toggle('visible', !isToday);
+    document.getElementById('moodNotice').classList.toggle('visible', !isToday);
+
+    loadDayData(dateKey);
+  }
+
+  function loadDayData(dateKey) {
+    loadFlashcardsData(); 
+    const mood = lsGet(sKey(dateKey,'mood')) || '';
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.textContent.trim() === mood.trim()));
+    document.getElementById('notesArea').value = lsGet(sKey(dateKey,'notes')) || '';
+  }
+
+  // --- GRÁFICO TÁTICO ---
+  function renderChart() {
+    const chartContainer = document.getElementById('studyChart');
+    if(!chartContainer) return;
+    
+    let html = '';
+    let maxTime = 60; 
+    
+    const dayTimes = weekDates.map(d => {
+        return parseInt(lsGet(sKey(toKey(d), 'studyTime')) || 0);
+    });
+    
+    const localMax = Math.max(...dayTimes);
+    if(localMax > maxTime) maxTime = localMax;
+    
+    weekDates.forEach((d, idx) => {
+        const val = dayTimes[idx];
+        const heightPct = (val / maxTime) * 100;
+        const label = DAY_SHORT[d.getDay()];
+        
+        let valStr = val + 'm';
+        if(val >= 60) {
+            const h = Math.floor(val/60);
+            const m = val % 60;
+            valStr = m > 0 ? `${h}h${m}m` : `${h}h`;
+        }
+        
+        html += `
+        <div class="chart-bar-wrapper">
+            <div class="chart-val">${val > 0 ? valStr : ''}</div>
+            <div class="chart-bar" style="height: ${heightPct}%;"></div>
+            <div class="chart-label">${label}</div>
+        </div>`;
+    });
+    chartContainer.innerHTML = html;
+  }
+
+  // --- CONTADOR DE FLASHCARDS CUSTOMIZADO ---
+  const ALL_SUBJECTS = ["Língua Portuguesa", "Informática", "História de C. Grande", "Legislação e Ética", "Dir. Administrativo", "Dir. Constitucional", "Legislação de Trânsito"];
+  
+  function addSubjectFlashcard() {
+    const subj = document.getElementById('flashSubject').value;
+    if(!subj) return;
+    
+    let total = parseInt(lsGet(sKey(activeDate, 'flashcards')) || 0);
+    total += 1;
+    lsSet(sKey(activeDate, 'flashcards'), total);
+    
+    let subKey = sKey(activeDate, 'flash_' + subj);
+    let subTotal = parseInt(lsGet(subKey) || 0);
+    lsSet(subKey, subTotal + 1);
+    
+    loadFlashcardsData();
+    buildDayBar();
+  }
+
+  function loadFlashcardsData() {
+    let total = parseInt(lsGet(sKey(activeDate, 'flashcards')) || 0);
+    document.getElementById('flashDisplayTotal').textContent = total;
+    
+    let listHtml = '';
+    ALL_SUBJECTS.forEach(sub => {
+        let val = parseInt(lsGet(sKey(activeDate, 'flash_'+sub)) || 0);
+        if(val > 0) {
+            listHtml += `<div class="flash-list-item">
+                <span>${sub}</span><span style="color:#38bdf8; font-weight:bold;">${val} cartões</span>
+            </div>`;
+        }
+    });
+    document.getElementById('flashSubjectList').innerHTML = listHtml;
+  }
+
+  // --- ANOTAÇÕES E EXCLUSÃO DE MISSÕES ---
+  function setMood(btn, mood) {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    lsSet(sKey(activeDate, 'mood'), mood);
+  }
+
+  function saveEntry() {
+    const notes = document.getElementById('notesArea').value;
+    lsSet(sKey(activeDate,'notes'), notes);
+    const msg = document.getElementById('savedMsg');
+    msg.textContent = '✅ Missão registrada e salva!';
+    msg.style.display='inline';
+    setTimeout(() => msg.style.display='none', 2500);
+    buildDayBar();
+    renderArchive();
+  }
+
+  function deleteEntry(dateKey, event) {
+    event.stopPropagation(); 
+    if(confirm('Atenção: Tem certeza que deseja excluir esta missão permanentemente do seu histórico?')) {
+        lsRemove('tatico_' + dateKey + '_notes');
+        lsRemove('tatico_' + dateKey + '_mood');
+        renderArchive();
+        if(dateKey === activeDate) {
+            document.getElementById('notesArea').value = '';
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        }
+    }
+  }
+
+  function renderArchive() {
+    const notesMap = {};
+    for(let i=0; i<Object.keys(db).length; i++){
+      const k = Object.keys(db)[i];
+      if(!k || !k.startsWith('tatico_') || !k.endsWith('_notes')) continue;
+      const parts = k.split('_');
+      if(parts.length < 3) continue;
+      const dateStr = parts[1];
+      const val = lsGet(k);
+      if(!val || !val.trim()) continue;
+      
+      const monthKey = dateStr.slice(0, 7);
+      if(!notesMap[monthKey]) notesMap[monthKey] = [];
+      const mood = lsGet('tatico_'+dateStr+'_mood') || '';
+      notesMap[monthKey].push({date: dateStr, mood, notes: val.trim()});
+    }
+
+    const container = document.getElementById('archiveFolders');
+    const months = Object.keys(notesMap).sort().reverse();
+
+    if(!months.length){
+      container.innerHTML = '<p class="no-notes-msg">Nenhum relatório arquivado nas pastas táticas ainda.</p>';
+      return;
+    }
+
+    container.innerHTML = months.map((mk, idx) => {
+      const [yr, mo] = mk.split('-');
+      const monthLabel = MONTH_NAMES_PT[parseInt(mo)-1] + ' ' + yr;
+      const entries = notesMap[mk].sort((a,b) => b.date.localeCompare(a.date));
+      const isFirst = idx === 0;
+
+      const entriesHtml = entries.map(e => {
+        const d = new Date(e.date+'T12:00:00');
+        const dateLabel = DAY_NAMES[d.getDay()]+', '+d.toLocaleDateString('pt-BR');
+        const preview = e.notes.length > 50 ? e.notes.slice(0,50)+'...' : e.notes;
+        return `<div class="note-card" onclick="this.classList.toggle('expanded')">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <span class="note-date">${dateLabel}</span>
+              ${e.mood ? `<span style="margin-left:8px; font-size:0.75rem; color:#eab308; background:#2d3748; padding:2px 6px; border-radius:4px">${e.mood}</span>` : ''}
+            </div>
+            <button class="btn-delete-missao" onclick="deleteEntry('${e.date}', event)">Excluir Missão ❌</button>
+          </div>
+          <div class="note-preview">${preview}</div>
+          <div class="note-full">${e.notes}</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="month-folder">
+        <div class="month-folder-header" onclick="toggleFolder(this)">
+          <span class="folder-name">📁 Relatórios de ${monthLabel}</span>
+          <span class="folder-count">${entries.length} reg</span>
+        </div>
+        <div class="folder-body ${isFirst ? 'open' : ''}" style="${isFirst ? 'display:block' : ''}">${entriesHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleFolder(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.style.display === 'block';
+    body.style.display = isOpen ? 'none' : 'block';
+  }
+
+  // --- EDITAL DO PDF ---
+  const EDITAL_ESTRUTURA = [
+    {
+      materia: "Língua Portuguesa (8 Questões)",
+      topicos: [
+        { t: "1. Leitura, compreensão e interpretação de textos", p: "alta" },
+        { t: "1. Estruturação do texto e dos parágrafos", p: "alta" },
+        { t: "1. Articulação textual: pronomes, expressões referenciais, nexos e operadores sequenciais", p: "alta" },
+        { t: "1. Significação contextual de palavras e expressões / Equivalência estrutural", p: "alta" },
+        { t: "2. Sintaxe: processos de coordenação e subordinação", p: "alta" },
+        { t: "2. Emprego de tempos e modos verbais", p: "alta" },
+        { t: "2. Pontuação e Fraseal", p: "alta" },
+        { t: "2. Concordância nominal e verbal", p: "alta" },
+        { t: "2. Regência nominal e verbal", p: "alta" },
+        { t: "2. Pronomes: emprego, formas de tratamento e colocação", p: "alta" },
+        { t: "3. Morfologia: estrutura e formação de palavras / Funções das classes", p: "alta" },
+        { t: "3. Flexão nominal e verbal", p: "alta" },
+        { t: "4. Norma-padrão: Ortografia oficial e acentuação gráfica", p: "alta" }
+      ]
+    },
+    {
+      materia: "Noções de Informática (4 Questões)",
+      topicos: [
+        { t: "1. Hardware: dispositivos de armazenamento, memórias, periféricos, extensões e arquivos", p: "alta" },
+        { t: "2. Sistemas Operacionais Windows/Linux: pastas, diretórios, arquivos, atalhos, área de trabalho e transferência", p: "alta" },
+        { t: "3. Editor de textos: estrutura básica, formatação, cabeçalhos, colunas, tabelas e objetos", p: "alta" },
+        { t: "4. Planilhas eletrônicas: células, fórmulas, funções, macros, tabelas e gráficos", p: "alta" },
+        { t: "5. Correio eletrônico: uso, preparo, envio e anexação de arquivos", p: "media" },
+        { t: "6. Ferramentas de comunicação: Teams, Meet, Zoom, Skype, Hangout", p: "media" },
+        { t: "7. Internet, intranet, extranet, protocolos, buscas, URL e navegadores (Firefox/Chrome)", p: "alta" },
+        { t: "8. Segurança da informação: princípios, confidencialidade, backup, antivírus, firewalls e malwares", p: "alta" }
+      ]
+    },
+    {
+      materia: "História de Campina Grande - PB (4 Questões)",
+      topicos: [
+        { t: "1. História geral sobre o município de Campina Grande, na Paraíba", p: "alta" }
+      ]
+    },
+    {
+      materia: "Legislação e Ética no Serviço Público (4 Questões)",
+      topicos: [
+        { t: "1. Lei Orgânica do Município de Campina Grande", p: "alta" },
+        { t: "1. Lei Federal nº 13.709/2018 - Lei Geral de Proteção de Dados Pessoais (LGPD)", p: "media" },
+        { t: "1. Lei Federal nº 12.527/2011 - Lei de Acesso à Informação (LAI)", p: "media" },
+        { t: "2. Ética no serviço público: conceitos, ética e moral, valores, integridade, decoro e papel do servidor", p: "alta" },
+        { t: "3. Princípios da Administração Pública aplicados à ética (LIMPE)", p: "alta" }
+      ]
+    },
+    {
+      materia: "Noções de Direito Administrativo (5 Questões)",
+      topicos: [
+        { t: "1. Administração Pública: conceito, organização, direta/indireta, autarquias, fundações, estatais e regime jurídico", p: "alta" },
+        { t: "2. Princípios expressos (art. 37, caput) e implícitos (supremacia, indisponibilidade, autotutela, etc.)", p: "alta" },
+        { t: "3. Atos Administrativos: conceito, atributos, elementos, espécies, validade, revogação e extinção", p: "alta" },
+        { t: "4. Poderes da Administração: vinculado, discricionário, hierárquico, disciplinar, regulamentar e de polícia", p: "alta" },
+        { t: "5. Serviços Públicos: conceito, princípios, classificação, prestação e delegação (concessão/permissão)", p: "media" },
+        { t: "6. Agentes Públicos: conceito, classificação, cargo/emprego/função, direitos, deveres, responsabilidades e acumulação", p: "alta" },
+        { t: "7. Responsabilidade Civil do Estado: objetiva, ação e omissão estatal", p: "alta" }
+      ]
+    },
+    {
+      materia: "Noções de Direito Constitucional (5 Questões)",
+      topicos: [
+        { t: "1. Teoria da Constituição: Estado, conceito, supremacia e aplicabilidade das normas", p: "media" },
+        { t: "2. CRFB/88: Preâmbulo, princípios fundamentais, objetivos, relações internacionais e dignidade humana", p: "media" },
+        { t: "3. Direitos e Garantias Fundamentais: individuais, coletivos, sociais, nacionalidade e políticos", p: "alta" },
+        { t: "4. Remédios Constitucionais: HC, HD, MS individual/coletivo, MI e Ação Popular", p: "alta" },
+        { t: "5. Organização do Estado: organização político-administrativa, entes federativos e competências", p: "alta" },
+        { t: "6. Administração Pública: disposições constitucionais gerais e servidores públicos (art. 37)", p: "alta" },
+        { t: "7. Defesa do Estado e das Instituições: Segurança Pública e órgãos previstos no art. 144", p: "alta" },
+        { t: "8. Ordem Social: base e objetivos", p: "media" },
+        { t: "9. Direitos Fundamentais aplicados à segurança pública, locomoção, devido processo legal e abuso de autoridade", p: "alta" }
+      ]
+    },
+    {
+      materia: "Legislação de Trânsito (30 Questões - PESO 2)",
+      topicos: [
+        { t: "1. CTB (Lei Federal nº 9.503/1997) com suas alterações e anexos completo", p: "alta" },
+        { t: "1. Sistema Nacional de Trânsito: composição, competências e diretrizes", p: "alta" },
+        { t: "1. Normas gerais de circulação e conduta / Pedestres e veículos não motorizados", p: "alta" },
+        { t: "1. Sinalização de trânsito, engenharia de tráfego, operação e fiscalização", p: "alta" },
+        { t: "1. Veículos: classificação, segurança, identificação, registro, licenciamento e habilitação", p: "alta" },
+        { t: "1. Infrações, penalidades, medidas administrativas e processo administrativo (autuação, recursos)", p: "alta" },
+        { t: "1. Crimes de trânsito: disposições gerais e crimes em espécie", p: "alta" },
+        { t: "2. Resolução CONTRAN nº 1013/2024, 227/2007, 996/2023, 940/2022 (Sinalização e Circulação)", p: "alta" },
+        { t: "2. Resolução CONTRAN nº 993/2023, 968/2022, 36/1998, 970/2022, 242/2007 (Veículos e Segurança)", p: "alta" },
+        { t: "2. Resolução CONTRAN nº 914/2022, 955/2022, 911/2022, 1020/2025, 1009/2024 (Registro e Habilitação)", p: "alta" },
+        { t: "2. Resolução CONTRAN nº 432/2013, 918/2022, 985/2022 (Fiscalização, Infrações e Processo)", p: "alta" },
+        { t: "2. Resolução CONTRAN nº 991/2023, 1003/2024, 1012/2024, 900/2022 (Procedimentos Operacionais)", p: "alta" },
+        { t: "3. Portaria SENATRAN nº 966/2022 - Diretrizes e requisitos para o Curso de Agente de Trânsito", p: "alta" }
+      ]
+    }
+  ];
+
+  function renderEdital() {
+    const container = document.getElementById('editalContainer');
+    const custom = lsGet('tatico_usa_custom_edital') === 'true';
+    
+    if(custom) {
+      document.getElementById('editalTitle').textContent = '📋 Edital: ' + (lsGet('tatico_concurso_nome') || 'Polícia Penal PB');
+      let lista = ["Língua Portuguesa", "Direito Penal", "Direito Processual Penal", "Legislação Especial"];
+      container.innerHTML = lista.map((mat, i) => {
+        const checked = lsGet('tatico_custom_ed_chk_' + i) === 'true';
+        return `<div class="topic-item">
+          <input type="checkbox" id="c_chk_${i}" ${checked ? 'checked' : ''} onchange="lsSet('tatico_custom_ed_chk_${i}', this.checked); renderEdital()">
+          <label for="c_chk_${i}" style="${checked ? 'text-decoration: line-through; color: #64748b' : ''}">${mat}</label>
+        </div>`;
+      }).join('');
+      return;
+    }
+
+    document.getElementById('editalTitle').textContent = '📋 Edital Verticalizado: STTP Campina Grande';
+    container.innerHTML = EDITAL_ESTRUTURA.map((block, idx) => {
+      const isOpen = lsGet('tatico_folder_open_' + idx) === 'true';
+      const topicsHtml = block.topicos.map((topico, i) => {
+        const checked = lsGet('tatico_pdf_chk_' + idx + '_' + i) === 'true';
+        return `<div class="topic-item">
+          <input type="checkbox" id="pdf_chk_${idx}_${i}" ${checked ? 'checked' : ''} onchange="lsSet('tatico_pdf_chk_${idx}_${i}', this.checked); renderEdital()">
+          <label for="pdf_chk_${idx}_${i}" style="${checked ? 'text-decoration: line-through; color: #64748b' : ''}">${topico.t} <span class="priority-tag ${topico.p === 'alta' ? 'p-alta' : 'p-media'}">${topico.p}</span></label>
+        </div>`;
+      }).join('');
+      return `<div class="subject-block">
+        <div class="subject-block-header" onclick="lsSet('tatico_folder_open_${idx}', !${isOpen}); renderEdital()">
+          <span>${block.materia}</span><span>${isOpen ? '▲' : '▼'}</span>
+        </div>
+        <div class="subject-block-content ${isOpen ? 'open' : ''}">${topicsHtml}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // --- TRACKER METAS ---
+  const METAS_LISTA = ['Correr 3x na semana', 'Se alongar', 'Estudar 3h diárias', 'Exercício Físico 3x', 'Ler 2x na semana', 'Oração Diária'];
+  let trackerYear = 2026, trackerMonth = 6; 
+  function buildTrackerTable() {
+    document.getElementById('trackerTitle').textContent = `🌱 Metas Operacionais — ${MONTH_NAMES_PT[trackerMonth]} ${trackerYear}`;
+    const headerRow = document.getElementById('tableHeaderRow');
+    headerRow.innerHTML = '<th style="text-align:left; padding:6px; background:#0f172a; border:1px solid #334155; color:#eab308">Minhas Metas</th>';
+    const days = new Date(trackerYear, trackerMonth + 1, 0).getDate();
+    const DAY_INIT = ['D','S','T','Q','Q','S','S'];
+    for(let d=1; d<=days; d++) {
+      const dt = new Date(trackerYear, trackerMonth, d);
+      headerRow.innerHTML += `<th style="padding:4px 2px; background:${dt.getDay()===0||dt.getDay()===6 ? '#1e293b' : '#0f172a'}; border:1px solid #334155; text-align:center; min-width:24px"><div>${d}</div><div style="color:#64748b; font-size:0.55rem">${DAY_INIT[dt.getDay()]}</div></th>`;
+    }
+    const tbody = document.getElementById('habitTableBody');
+    tbody.innerHTML = '';
+    METAS_LISTA.forEach(meta => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td style="padding:6px; border:1px solid #334155; background:#0f172a; font-size:0.8rem; font-weight:600; white-space:nowrap">${meta}</td>`;
+      for(let d=1; d<=days; d++) {
+        const key = `tatico_meta_${trackerYear}${String(trackerMonth+1).padStart(2,'0')}_${meta.replace(/\s/g,'_')}_${d}`;
+        const checked = lsGet(key) === '1';
+        const td = document.createElement('td');
+        td.style.cssText = 'border:1px solid #334155; text-align:center; padding:2px; cursor:pointer;';
+        td.innerHTML = `<div class="hcell ${checked ? 'hchecked' : ''}">${checked ? '✓' : ''}</div>`;
+        td.addEventListener('click', function() {
+          const cell = this.querySelector('.hcell');
+          if(cell.classList.contains('hchecked')) { lsRemove(key); cell.classList.remove('hchecked'); cell.textContent = ''; } 
+          else { lsSet(key, '1'); cell.classList.add('hchecked'); cell.textContent = '✓'; }
+        });
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Inicialização — carrega do JSONBin antes de renderizar
+  carregarBin().then(() => {
+    renderEdital();
+    buildDayBar();
+    switchDay(todayDate);
+    buildTrackerTable();
+    renderArchive();
+    renderChart();
+    renderGlobalProgress();
+    updateCountdown();
+  });
+  // Auto-reload a cada 2 minutos
+  setInterval(() => carregarBin().then(() => {
+    renderEdital();
+    buildDayBar();
+    switchDay(activeDate);
+    buildTrackerTable();
+    renderArchive();
+    renderChart();
+    renderGlobalProgress();
+  }), 120000);
+</script>
+</body>
+</html>
