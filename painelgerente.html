@@ -54,7 +54,8 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; scroll-behavior: smooth; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    #appContent { display: flex; min-height: 100vh; width: 100%; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg2); }
     ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
@@ -304,6 +305,31 @@
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:none;min-height:100vh;width:100%;align-items:center;justify-content:center;background:linear-gradient(135deg,#FDF6F0,#FAD4DE);">
+  <div style="background:#fff;border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(196,82,26,0.18);text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:8px">💄</div>
+    <div style="font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#C4521A,#BE1558);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px">Maqui+</div>
+    <div style="font-size:0.85rem;color:#A05030;margin-bottom:1.8rem">Painel de Gerência</div>
+
+    <div style="text-align:left;margin-bottom:1rem">
+      <label style="font-size:0.78rem;color:#6B3018;font-weight:600;display:block;margin-bottom:5px">Usuário</label>
+      <input type="text" id="loginUsuario" placeholder="Seu usuário" style="width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid #EDD5C5;font-family:'Outfit',sans-serif;font-size:0.92rem;background:#FFF8F4;color:#2A1208" autocomplete="username">
+    </div>
+    <div style="text-align:left;margin-bottom:1.2rem">
+      <label style="font-size:0.78rem;color:#6B3018;font-weight:600;display:block;margin-bottom:5px">Senha</label>
+      <input type="password" id="loginSenha" placeholder="Sua senha" style="width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid #EDD5C5;font-family:'Outfit',sans-serif;font-size:0.92rem;background:#FFF8F4;color:#2A1208" autocomplete="current-password">
+    </div>
+
+    <div id="loginErro" style="display:none;background:#FDECEC;color:#C4521A;border:1px solid #F4ADBD;border-radius:8px;padding:8px 12px;font-size:0.8rem;margin-bottom:1rem"></div>
+
+    <button id="loginBtn" onclick="fazerLogin()" style="width:100%;padding:12px;border-radius:99px;border:none;background:linear-gradient(135deg,#C4521A,#BE1558);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer">Entrar</button>
+  </div>
+</div>
+
+<!-- APP CONTENT -->
+<div id="appContent" style="display:none">
+
 <div class="glow-pink"></div>
 <div class="glow-lilac"></div>
 
@@ -347,6 +373,8 @@
     </div>
   </nav>
   <div class="sidebar-footer">
+    Logado como <b id="userNomeDisplay" style="color:#fff"></b>
+    <div style="margin-top:8px"><button onclick="fazerLogout()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:0.72rem;padding:5px 12px;border-radius:99px;cursor:pointer;font-family:'Outfit',sans-serif">Sair 🚪</button></div>
     Maqui+ © 2026
     <div class="sidebar-wave"></div>
   </div>
@@ -568,6 +596,8 @@
   </section>
 </main>
 
+</div><!-- /appContent -->
+
 <!-- MODAL: Editar dia da escala -->
 <div class="modal-overlay hidden" id="modal-overlay">
   <div class="modal">
@@ -723,6 +753,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwdqhSwjgUa-SwKulcWZG-l
 
 let db = {};
 let syncTimer = null;
+let authToken = sessionStorage.getItem('maqui_token') || null;
+let authNome = sessionStorage.getItem('maqui_nome') || null;
 
 function load(key, fb) {
   try {
@@ -749,7 +781,7 @@ function agendarSync() {
 async function salvarSheets() {
   try {
     setSyncBadge('⏳ Salvando...');
-    await fetch(API_URL, { method: 'POST', body: JSON.stringify(db) });
+    await fetch(`${API_URL}?token=${encodeURIComponent(authToken)}`, { method: 'POST', body: JSON.stringify(db) });
     setSyncBadge('✅ Sync');
     localStorage.setItem('maqui_backup', JSON.stringify(db));
   } catch(e) {
@@ -760,9 +792,14 @@ async function salvarSheets() {
 async function carregarSheets() {
   setSyncBadge('⏳ Carregando...');
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(`${API_URL}?token=${encodeURIComponent(authToken)}`);
     if(!res.ok) throw new Error(res.status);
-    db = await res.json();
+    const dados = await res.json();
+    if(dados.erro === 'nao_autorizado') {
+      fazerLogout();
+      return;
+    }
+    db = dados;
     setSyncBadge('✅ Sync');
     localStorage.setItem('maqui_backup', JSON.stringify(db));
   } catch(e) {
@@ -775,6 +812,61 @@ async function carregarSheets() {
 function setSyncBadge(txt) {
   const el = document.getElementById('syncBadge');
   if(el) el.textContent = txt;
+}
+
+// ============================================================
+//  LOGIN / AUTENTICAÇÃO
+// ============================================================
+async function fazerLogin() {
+  const usuario = document.getElementById('loginUsuario').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const erroEl = document.getElementById('loginErro');
+  const btnEl = document.getElementById('loginBtn');
+
+  if(!usuario || !senha) {
+    erroEl.textContent = 'Preencha usuário e senha.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  btnEl.disabled = true;
+  btnEl.textContent = 'Entrando...';
+  erroEl.style.display = 'none';
+
+  try {
+    const res = await fetch(`${API_URL}?action=login&usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`);
+    const data = await res.json();
+
+    if(data.sucesso) {
+      authToken = data.token;
+      authNome = data.nome;
+      sessionStorage.setItem('maqui_token', authToken);
+      sessionStorage.setItem('maqui_nome', authNome);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appContent').style.display = 'flex';
+      document.getElementById('userNomeDisplay').textContent = authNome;
+      iniciarApp();
+    } else {
+      erroEl.textContent = 'Usuário ou senha incorretos.';
+      erroEl.style.display = 'block';
+    }
+  } catch(e) {
+    erroEl.textContent = 'Erro de conexão. Tente novamente.';
+    erroEl.style.display = 'block';
+  }
+  btnEl.disabled = false;
+  btnEl.textContent = 'Entrar';
+}
+
+function fazerLogout() {
+  sessionStorage.removeItem('maqui_token');
+  sessionStorage.removeItem('maqui_nome');
+  authToken = null;
+  authNome = null;
+  document.getElementById('appContent').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUsuario').value = '';
+  document.getElementById('loginSenha').value = '';
 }
 
 // ============================================================
@@ -1324,7 +1416,7 @@ function shake(id){
 // ============================================================
 //  INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', ()=>{
+function iniciarApp() {
   carregarSheets().then(() => {
     initTopbar();
     document.getElementById('rem-date').value=todayStr();
@@ -1350,13 +1442,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
       renderCalendar();
     }), 120000);
   });
+}
 
+document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('modal-overlay').addEventListener('click', function(e){ if(e.target===this)closeModal(); });
   document.getElementById('modal-consultant').addEventListener('click', function(e){ if(e.target===this)closeConsultantModal(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeConsultantModal(); } });
 
+  document.getElementById('loginSenha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
+  document.getElementById('loginUsuario').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginSenha').focus(); });
+
   // Active filter style
   filterReminders('all');
+
+  // Se já tem token salvo na sessão, pula direto pro app
+  if(authToken) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'flex';
+    document.getElementById('userNomeDisplay').textContent = authNome || '';
+    iniciarApp();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appContent').style.display = 'none';
+  }
 });
 </script>
 </body>
