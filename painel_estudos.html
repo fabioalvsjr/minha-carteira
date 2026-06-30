@@ -120,6 +120,8 @@
   .flash-btn-add:hover {background: #0ea5e9;}
   .flash-count{font-family:'Anonymous Pro',monospace;font-size:1.8rem;font-weight:700;color:#38bdf8;}
   .flash-list-item {display:flex; justify-content:space-between; border-bottom:1px solid #1e293b; padding-bottom:5px; padding-top:5px; font-size: 0.85rem; color:#cbd5e1;}
+  .link-btn-flash{background:none;border:none;color:#94a3b8;font-size:0.72rem;font-family:'Nunito';cursor:pointer;text-decoration:underline}
+  .link-btn-flash:hover{color:#ef4444}
 
   /* Edital / Matérias */
   .edital-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem}
@@ -172,6 +174,15 @@
   /* Botão Excluir Missão */
   .btn-delete-missao {background-color: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: background 0.15s;}
   .btn-delete-missao:hover {background-color: #dc2626;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:rgba(30,41,59,0.95);border:1px solid #334155;border-radius:14px;padding:5px;margin-bottom:1.2rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab-btn{flex:1;min-width:78px;padding:9px 6px;border:none;border-radius:10px;background:transparent;font-family:'Nunito';font-size:0.72rem;font-weight:700;color:#94a3b8;cursor:pointer;transition:all .2s;white-space:nowrap;text-align:center}
+  .tab-btn:hover{color:#e2e8f0}
+  .tab-btn.active{background:linear-gradient(135deg,#eab308,#ca8a04);color:#0f172a;box-shadow:0 4px 12px rgba(234,179,8,0.3)}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+  @media(max-width:500px){.tab-btn{font-size:0.65rem;min-width:64px;padding:8px 4px}}
 </style>
 </head>
 <body>
@@ -188,6 +199,18 @@
     <div class="countdown-title" id="concursoTituloDisplay">🏁 Prova: Agente de Trânsito</div>
     <div class="countdown-time" id="countdownTimer">Carregando contagem tática...</div>
   </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="mudarTab('hoje',this)">🎯 Hoje</button>
+    <button class="tab-btn" onclick="mudarTab('progresso',this)">📊 Progresso</button>
+    <button class="tab-btn" onclick="mudarTab('edital',this)">📋 Edital</button>
+    <button class="tab-btn" onclick="mudarTab('metas',this)">🌱 Metas</button>
+    <button class="tab-btn" onclick="mudarTab('diario',this)">💀 Diário</button>
+    <button class="tab-btn" onclick="mudarTab('arquivo',this)">📁 Arquivo</button>
+  </div>
+
+  <!-- TAB: HOJE -->
+  <div class="tab-panel active" id="tab-hoje">
 
   <div class="section">
     <div class="edital-header-row">
@@ -238,27 +261,6 @@
   </div>
 
   <div class="section">
-    <div class="section-title gold-title">📈 Progresso Global: Missão Até a Prova</div>
-    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:0.8rem;">Contabilização de todo o tempo de estudo (Pomodoro + Manual) voltado para bater sua meta final:</p>
-    
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 8px;">
-      <span id="totalStudyDisplay" style="font-weight:800; font-size:1.4rem; color:#4ade80;">0h 0m</span>
-      <button class="edit-concurso-btn" onclick="setMetaHoras()">Definir Meta 🎯</button>
-    </div>
-    
-    <div style="width:100%; background:#1e293b; border-radius:8px; height:22px; overflow:hidden; border:1px solid #475569; position:relative;">
-      <div id="globalProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #38bdf8, #4ade80); transition:width 0.8s ease-in-out;"></div>
-    </div>
-    <div style="font-size:0.75rem; color:#94a3b8; text-align:right; margin-top:5px;" id="metaDisplay">Meta da Aprovação: 300h</div>
-  </div>
-
-  <div class="section">
-    <div class="section-title blue-title">📊 Frequência Tática (Últimos 7 Dias)</div>
-    <div class="chart-container" id="studyChart">
-        </div>
-  </div>
-
-  <div class="section">
     <div class="section-title blue-title">🗂️ Flashcards por Matéria</div>
     <div class="past-notice" id="flashNotice">👀 Visualizando outro dia — os dados refletem a data selecionada.</div>
     <div class="flash-box">
@@ -281,6 +283,9 @@
       </div>
       <div id="flashSubjectList" style="display:flex; flex-direction:column; margin-top: 5px;">
           </div>
+      <div style="text-align:right;margin-top:8px">
+        <button class="link-btn-flash" onclick="zerarFlashcardsDia()">Zerar flashcards do dia 🔄</button>
+      </div>
 
       <div style="border-top:1px dashed #334155;margin-top:14px;padding-top:10px">
         <span style="font-size:0.85rem;font-weight:600;color:#94a3b8">📅 Total de Flashcards por Mês</span>
@@ -289,6 +294,37 @@
       </div>
     </div>
   </div>
+
+  </div><!-- /tab-hoje -->
+
+  <!-- TAB: PROGRESSO -->
+  <div class="tab-panel" id="tab-progresso">
+
+  <div class="section">
+    <div class="section-title gold-title">📈 Progresso Global: Missão Até a Prova</div>
+    <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:0.8rem;">Contabilização de todo o tempo de estudo (Pomodoro + Manual) voltado para bater sua meta final:</p>
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 8px;">
+      <span id="totalStudyDisplay" style="font-weight:800; font-size:1.4rem; color:#4ade80;">0h 0m</span>
+      <button class="edit-concurso-btn" onclick="setMetaHoras()">Definir Meta 🎯</button>
+    </div>
+    
+    <div style="width:100%; background:#1e293b; border-radius:8px; height:22px; overflow:hidden; border:1px solid #475569; position:relative;">
+      <div id="globalProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #38bdf8, #4ade80); transition:width 0.8s ease-in-out;"></div>
+    </div>
+    <div style="font-size:0.75rem; color:#94a3b8; text-align:right; margin-top:5px;" id="metaDisplay">Meta da Aprovação: 300h</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title blue-title">📊 Frequência Tática (Últimos 7 Dias)</div>
+    <div class="chart-container" id="studyChart">
+        </div>
+  </div>
+
+  </div><!-- /tab-progresso -->
+
+  <!-- TAB: EDITAL -->
+  <div class="tab-panel" id="tab-edital">
 
   <div class="section">
     <div class="edital-header-row">
@@ -299,6 +335,11 @@
     <div id="editalContainer">
       </div>
   </div>
+
+  </div><!-- /tab-edital -->
+
+  <!-- TAB: METAS -->
+  <div class="tab-panel" id="tab-metas">
 
   <div class="section">
     <div class="section-title green-title" id="trackerTitle">🌱 Metas Operacionais & Saudáveis</div>
@@ -312,6 +353,11 @@
       </table>
     </div>
   </div>
+
+  </div><!-- /tab-metas -->
+
+  <!-- TAB: DIÁRIO -->
+  <div class="tab-panel" id="tab-diario">
 
   <div class="section diario-operacional-bg">
     <div class="section-title gold-title">💀 Relatório Diário / Estado de Prontidão</div>
@@ -330,10 +376,17 @@
     </div>
   </div>
 
+  </div><!-- /tab-diario -->
+
+  <!-- TAB: ARQUIVO -->
+  <div class="tab-panel" id="tab-arquivo">
+
   <div class="archive-section" id="archiveSection">
     <div class="section-title gold-title">📁 Arquivo Relatório de Missões</div>
     <div id="archiveFolders"><p class="no-notes-msg">Nenhum relatório arquivado ainda.</p></div>
   </div>
+
+  </div><!-- /tab-arquivo -->
 
 </div>
 
@@ -398,6 +451,14 @@
     if(el) el.textContent = txt;
   }
   // ─── FIM GOOGLE SHEETS SYNC ────────────────────────────────────────────────
+
+  // ─── TABS ──────────────────────────────────────────────────────────────────
+  function mudarTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
 
   const DAY_NAMES = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
   const DAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -765,6 +826,14 @@
     lsSet(subKey, subTotal + qtd);
 
     qtdInput.value = '1';
+    loadFlashcardsData();
+    buildDayBar();
+  }
+
+  function zerarFlashcardsDia() {
+    if(!confirm('Zerar todos os flashcards registrados para este dia?')) return;
+    lsRemove(sKey(activeDate, 'flashcards'));
+    ALL_SUBJECTS.forEach(sub => lsRemove(sKey(activeDate, 'flash_' + sub)));
     loadFlashcardsData();
     buildDayBar();
   }
