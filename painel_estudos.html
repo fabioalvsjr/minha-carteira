@@ -34,6 +34,15 @@
   .countdown-title{font-size:0.85rem;color:#eab308;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:0.5rem}
   .countdown-time{font-family:'Anonymous Pro',monospace;font-size:1.6rem;font-weight:700;color:#fff}
 
+  /* Informações da Prova */
+  .exam-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .exam-info-card{background:rgba(15,23,42,0.8);border:1px solid #334155;border-radius:10px;padding:0.8rem;display:flex;flex-direction:column;gap:3px}
+  .exam-info-icon{font-size:1.1rem}
+  .exam-info-label{font-size:0.68rem;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.4px}
+  .exam-info-val{font-size:0.9rem;color:#f3f4f6;font-weight:700;word-break:break-word}
+  .exam-info-val.empty{color:#64748b;font-weight:400;font-style:italic;font-size:0.8rem}
+  @media(max-width:480px){.exam-info-grid{grid-template-columns:1fr}}
+
   /* Seções */
   .section{background:rgba(30,41,59,0.95);border:1px solid #334155;border-radius:14px;padding:1.3rem;margin-bottom:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
   .section-title{font-family:'Anonymous Pro',monospace;font-size:1.3rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
@@ -63,12 +72,29 @@
   .hchecked{background:#4ade80;color:#0f172a}
 
   /* Pomodoro e Tempo Manual */
-  .pomodoro-container{display:flex; flex-direction:column; background:rgba(15,23,42,0.8);padding:1rem;border-radius:10px;border:1px solid #334155}
-  .pomo-time{font-family:'Anonymous Pro',monospace;font-size:2.5rem;font-weight:700;color:#fff; text-align:center;}
-  .pomo-btn{padding:0.5rem 1.2rem;border-radius:6px;border:none;background:#eab308;color:#0f172a;font-weight:700;cursor:pointer;text-transform:uppercase;font-size:0.8rem;transition:background 0.15s}
+  .pomodoro-container{display:flex; flex-direction:column; background:rgba(15,23,42,0.8);padding:1.2rem;border-radius:10px;border:1px solid #334155}
+  .pomo-modes{display:flex;gap:6px;justify-content:center;margin-bottom:1rem}
+  .pomo-mode-btn{padding:6px 14px;border-radius:20px;border:1px solid #475569;background:rgba(15,23,42,0.9);color:#94a3b8;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.15s}
+  .pomo-mode-btn:hover{border-color:#64748b;color:#fff}
+  .pomo-mode-btn.active-foco{background:#eab308;border-color:#eab308;color:#0f172a}
+  .pomo-mode-btn.active-pausa{background:#4ade80;border-color:#4ade80;color:#0f172a}
+  .pomo-mode-btn.active-pausa-longa{background:#38bdf8;border-color:#38bdf8;color:#0f172a}
+  .pomo-ring-wrapper{position:relative;width:180px;height:180px;margin:0 auto 1rem}
+  .pomo-ring-wrapper svg{transform:rotate(-90deg)}
+  .pomo-ring-bg{fill:none;stroke:#1e293b;stroke-width:10}
+  .pomo-ring-progress{fill:none;stroke:#eab308;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear, stroke 0.3s}
+  .pomo-ring-progress.pausa{stroke:#4ade80}
+  .pomo-ring-progress.pausa-longa{stroke:#38bdf8}
+  .pomo-time{font-family:'Anonymous Pro',monospace;font-size:2.6rem;font-weight:700;color:#fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+  .pomo-cycle-label{position:absolute;bottom:18%;left:50%;transform:translateX(-50%);font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+  .pomo-controls{display:flex;gap:8px;justify-content:center}
+  .pomo-btn{padding:0.6rem 1.4rem;border-radius:8px;border:none;background:#eab308;color:#0f172a;font-weight:700;cursor:pointer;text-transform:uppercase;font-size:0.8rem;transition:background 0.15s}
   .pomo-btn:hover{background:#ca8a04}
   .pomo-btn.btn-reset{background:#475569;color:#fff}
   .pomo-btn.btn-reset:hover{background:#334155}
+  .pomo-cycles-dots{display:flex;gap:6px;justify-content:center;margin-top:12px}
+  .pomo-dot{width:10px;height:10px;border-radius:50%;background:#334155;border:1px solid #475569}
+  .pomo-dot.done{background:#eab308;border-color:#eab308}
   .manual-time-input {width: 70px; padding: 6px; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: #fff; font-family:'Nunito'; text-align:center;}
   .manual-time-input:focus {outline: none; border-color: #38bdf8;}
 
@@ -79,7 +105,14 @@
   .chart-label { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; }
   .chart-val { font-size: 0.7rem; color: #eab308; margin-bottom: 3px; font-weight: bold; text-align: center;}
 
-  /* Flashcards Dinâmicos */
+  /* Gráfico Mensal de Flashcards */
+  .flash-month-chart{display:flex;align-items:flex-end;justify-content:space-around;height:150px;background:rgba(15,23,42,0.8);border-radius:10px;border:1px solid #334155;padding:15px 8px 5px 8px;margin-top:14px;gap:4px;overflow-x:auto}
+  .flash-month-bar-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:32px;flex:1}
+  .flash-month-bar{width:100%;background:#38bdf8;border-radius:4px 4px 0 0;transition:height 0.5s;min-height:2px}
+  .flash-month-label{font-size:0.62rem;color:#94a3b8;margin-top:5px;text-align:center;white-space:nowrap}
+  .flash-month-val{font-size:0.65rem;color:#eab308;margin-bottom:3px;font-weight:bold;text-align:center}
+  .flash-month-total{text-align:center;font-size:0.78rem;color:#94a3b8;margin-top:10px}
+  .flash-month-total b{color:#38bdf8;font-family:'Anonymous Pro',monospace;font-size:1rem}
   .flash-box{display:flex; flex-direction: column; align-items: stretch; gap: 10px; background:rgba(15,23,42,0.8);padding:1rem;border-radius:10px;border:1px solid #334155}
   .flash-select {flex:1; padding: 10px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid #475569; font-family:'Nunito'; font-size: 0.9rem;}
   .flash-select:focus {outline: none; border-color: #38bdf8;}
@@ -156,22 +189,46 @@
     <div class="countdown-time" id="countdownTimer">Carregando contagem tática...</div>
   </div>
 
+  <div class="section">
+    <div class="edital-header-row">
+      <div class="section-title gold-title" style="margin-bottom:0">🗺️ Informações da Prova</div>
+      <button class="edit-concurso-btn" onclick="editarInfoProva()">Editar ✏️</button>
+    </div>
+    <div class="exam-info-grid" id="examInfoGrid"></div>
+  </div>
+
   <div class="date-bar" id="dayBar"></div>
   <div class="current-day-label" id="currentDayLabel"></div>
 
   <div class="section">
     <div class="section-title blue-title">⏱️ Gerenciador de Tempo: Pomodoro</div>
     <div class="pomodoro-container">
-      
-      <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom: 15px;">
-        <div class="pomo-time" id="pomoDisplay">25:00</div>
-        <div style="display:flex; gap:8px">
-          <button class="pomo-btn" id="btnStart" onclick="togglePomodoro()">Iniciar</button>
-          <button class="pomo-btn btn-reset" onclick="resetPomodoro()">Reset</button>
-        </div>
+
+      <div class="pomo-modes">
+        <button class="pomo-mode-btn active-foco" id="modeBtn_foco" onclick="setPomoModo('foco')">🎯 Foco 25m</button>
+        <button class="pomo-mode-btn" id="modeBtn_pausa" onclick="setPomoModo('pausa')">☕ Pausa 5m</button>
+        <button class="pomo-mode-btn" id="modeBtn_pausa-longa" onclick="setPomoModo('pausa-longa')">🛌 Pausa 15m</button>
       </div>
 
-      <div style="border-top: 1px dashed #334155; padding-top: 15px; display:flex; gap:10px; align-items:center; justify-content:center;">
+      <div class="pomo-ring-wrapper">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle class="pomo-ring-bg" cx="90" cy="90" r="80"></circle>
+          <circle class="pomo-ring-progress" id="pomoRingProgress" cx="90" cy="90" r="80"
+            stroke-dasharray="502.65" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="pomo-time" id="pomoDisplay">25:00</div>
+        <div class="pomo-cycle-label" id="pomoCycleLabel">Foco</div>
+      </div>
+
+      <div class="pomo-controls">
+        <button class="pomo-btn" id="btnStart" onclick="togglePomodoro()">Iniciar</button>
+        <button class="pomo-btn btn-reset" onclick="resetPomodoro()">Reset</button>
+      </div>
+
+      <div class="pomo-cycles-dots" id="pomoCyclesDots"></div>
+      <div style="text-align:center;font-size:0.75rem;color:#94a3b8;margin-top:6px" id="pomoCycleCount">0 ciclos hoje</div>
+
+      <div style="border-top: 1px dashed #334155; margin-top:16px; padding-top: 15px; display:flex; gap:10px; align-items:center; justify-content:center;">
         <span style="font-size:0.85rem; color:#94a3b8; font-weight:600;">Registro Manual:</span>
         <input type="number" id="manualTimeInput" class="manual-time-input" placeholder="Min...">
         <button class="pomo-btn" style="background: #38bdf8;" onclick="addManualTime()">+ Lançar</button>
@@ -215,7 +272,8 @@
               <option value="Dir. Constitucional">Dir. Constitucional</option>
               <option value="Legislação de Trânsito">Legislação de Trânsito</option>
           </select>
-          <button class="flash-btn-add" onclick="addSubjectFlashcard()">Add +1</button>
+          <input type="number" id="flashQtd" class="manual-time-input" placeholder="Qtd" style="width:60px" min="1" value="1">
+          <button class="flash-btn-add" onclick="addSubjectFlashcard()">+ Add</button>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
           <span style="font-size:0.95rem;font-weight:600">Cartões Estudados Hoje:</span>
@@ -223,6 +281,12 @@
       </div>
       <div id="flashSubjectList" style="display:flex; flex-direction:column; margin-top: 5px;">
           </div>
+
+      <div style="border-top:1px dashed #334155;margin-top:14px;padding-top:10px">
+        <span style="font-size:0.85rem;font-weight:600;color:#94a3b8">📅 Total de Flashcards por Mês</span>
+        <div class="flash-month-chart" id="flashMonthChart"></div>
+        <div class="flash-month-total" id="flashMonthTotal"></div>
+      </div>
     </div>
   </div>
 
@@ -373,6 +437,37 @@
   }
   setInterval(updateCountdown, 1000);
 
+  // --- INFORMAÇÕES DA PROVA ---
+  const EXAM_INFO_FIELDS = [
+    { key: 'data', icon: '📅', label: 'Data da Prova' },
+    { key: 'horario', icon: '🕐', label: 'Horário' },
+    { key: 'local', icon: '📍', label: 'Local de Prova' },
+    { key: 'ida', icon: '🚌', label: 'Horário de Ida (Guanabara)' },
+    { key: 'volta', icon: '🔙', label: 'Horário de Volta (Guanabara)' }
+  ];
+
+  function renderExamInfo() {
+    const grid = document.getElementById('examInfoGrid');
+    if(!grid) return;
+    grid.innerHTML = EXAM_INFO_FIELDS.map(f => {
+      const val = lsGet('tatico_exam_' + f.key);
+      return `<div class="exam-info-card">
+        <span class="exam-info-icon">${f.icon}</span>
+        <span class="exam-info-label">${f.label}</span>
+        <span class="exam-info-val ${val ? '' : 'empty'}">${val ? val : 'Não definido'}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function editarInfoProva() {
+    EXAM_INFO_FIELDS.forEach(f => {
+      const atual = lsGet('tatico_exam_' + f.key) || '';
+      const novo = prompt(`${f.icon} ${f.label}:`, atual);
+      if(novo !== null) lsSet('tatico_exam_' + f.key, novo);
+    });
+    renderExamInfo();
+  }
+
   function alterarConcurso() {
     const novoNome = prompt("Digite o novo concurso alvo:", "Polícia Penal PB");
     if(!novoNome) return;
@@ -386,16 +481,49 @@
     updateCountdown();
   }
 
-  // --- TIMER POMODORO E TEMPO MANUAL ---
+  // --- TIMER POMODORO (Foco / Pausa / Pausa Longa) com anel visual e ciclos ---
+  const POMO_DURACOES = { foco: 25*60, pausa: 5*60, 'pausa-longa': 15*60 };
+  const POMO_TOTAL = { foco: 25*60, pausa: 5*60, 'pausa-longa': 15*60 };
+  let pomoModo = 'foco';
   let pomoInterval = null;
-  let pomoSeconds = 25 * 60;
+  let pomoSeconds = POMO_DURACOES.foco;
   let pomoRunning = false;
+  let pomoCiclos = parseInt(lsGet(sKey(todayDate,'pomo_ciclos')) || 0);
+
+  const RING_CIRC = 2 * Math.PI * 80; // raio 80
+
+  function setPomoModo(modo) {
+    if(pomoRunning) { if(!confirm('O timer está rodando. Trocar de modo agora?')) return; }
+    clearInterval(pomoInterval);
+    pomoRunning = false;
+    pomoModo = modo;
+    pomoSeconds = POMO_DURACOES[modo];
+    document.getElementById('btnStart').textContent = "Iniciar";
+    document.querySelectorAll('.pomo-mode-btn').forEach(b => b.classList.remove('active-foco','active-pausa','active-pausa-longa'));
+    document.getElementById('modeBtn_' + modo).classList.add('active-' + modo);
+    document.getElementById('pomoRing').classList.remove('pausa','pausa-longa');
+    if(modo !== 'foco') document.getElementById('pomoRing').classList.add(modo);
+    renderPomodoro();
+  }
+
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+      osc.start(); osc.stop(ctx.currentTime + 0.6);
+    } catch(e) {}
+  }
 
   function togglePomodoro() {
     const btn = document.getElementById('btnStart');
     if(pomoRunning) {
       clearInterval(pomoInterval);
-      btn.textContent = "Iniciar";
+      btn.textContent = "Continuar";
       pomoRunning = false;
     } else {
       pomoRunning = true;
@@ -403,14 +531,24 @@
       pomoInterval = setInterval(() => {
         if(pomoSeconds <= 0) {
           clearInterval(pomoInterval);
-          alert("Gás total! Intervalo operacional liberado.");
-          
-          let currentDayTime = parseInt(lsGet(sKey(todayDate, 'studyTime')) || 0);
-          lsSet(sKey(todayDate, 'studyTime'), currentDayTime + 25);
-          
-          renderChart();
-          renderGlobalProgress();
-          resetPomodoro();
+          playBeep();
+
+          if(pomoModo === 'foco') {
+            let currentDayTime = parseInt(lsGet(sKey(todayDate, 'studyTime')) || 0);
+            lsSet(sKey(todayDate, 'studyTime'), currentDayTime + 25);
+            pomoCiclos++;
+            lsSet(sKey(todayDate,'pomo_ciclos'), pomoCiclos);
+            renderChart();
+            renderGlobalProgress();
+            renderPomoCycles();
+
+            const proximoModo = (pomoCiclos % 4 === 0) ? 'pausa-longa' : 'pausa';
+            alert(pomoCiclos % 4 === 0 ? '🦅 4 ciclos completos! Hora da pausa longa.' : '✅ Ciclo de foco concluído! Hora da pausa.');
+            setPomoModo(proximoModo);
+          } else {
+            alert('⏰ Pausa encerrada! Hora de voltar ao foco.');
+            setPomoModo('foco');
+          }
           return;
         }
         pomoSeconds--;
@@ -418,18 +556,40 @@
       }, 1000);
     }
   }
+
   function resetPomodoro() {
     clearInterval(pomoInterval);
-    pomoSeconds = 25 * 60;
+    pomoSeconds = POMO_DURACOES[pomoModo];
     pomoRunning = false;
     document.getElementById('btnStart').textContent = "Iniciar";
     renderPomodoro();
   }
+
   function renderPomodoro() {
     const m = String(Math.floor(pomoSeconds / 60)).padStart(2,'0');
     const s = String(pomoSeconds % 60).padStart(2,'0');
     document.getElementById('pomoDisplay').textContent = `${m}:${s}`;
+
+    const total = POMO_TOTAL[pomoModo];
+    const pct = pomoSeconds / total;
+    const offset = RING_CIRC * pct;
+    const ring = document.getElementById('pomoRingProgress');
+    if(ring) ring.style.strokeDashoffset = offset;
+
+    const labelMap = { foco: 'Foco', pausa: 'Pausa Curta', 'pausa-longa': 'Pausa Longa' };
+    document.getElementById('pomoCycleLabel').textContent = labelMap[pomoModo];
   }
+
+  function renderPomoCycles() {
+    const wrap = document.getElementById('pomoCyclesDots');
+    if(!wrap) return;
+    const completos = pomoCiclos % 4;
+    let html = '';
+    for(let i=0;i<4;i++) html += `<div class="pomo-dot ${i < completos ? 'done':''}"></div>`;
+    wrap.innerHTML = html;
+    document.getElementById('pomoCycleCount').textContent = `${pomoCiclos} ciclo${pomoCiclos===1?'':'s'} hoje`;
+  }
+
 
   function addManualTime() {
     const input = document.getElementById('manualTimeInput');
@@ -591,15 +751,20 @@
   function addSubjectFlashcard() {
     const subj = document.getElementById('flashSubject').value;
     if(!subj) return;
-    
+
+    const qtdInput = document.getElementById('flashQtd');
+    let qtd = parseInt(qtdInput.value);
+    if(isNaN(qtd) || qtd <= 0) qtd = 1;
+
     let total = parseInt(lsGet(sKey(activeDate, 'flashcards')) || 0);
-    total += 1;
+    total += qtd;
     lsSet(sKey(activeDate, 'flashcards'), total);
-    
+
     let subKey = sKey(activeDate, 'flash_' + subj);
     let subTotal = parseInt(lsGet(subKey) || 0);
-    lsSet(subKey, subTotal + 1);
-    
+    lsSet(subKey, subTotal + qtd);
+
+    qtdInput.value = '1';
     loadFlashcardsData();
     buildDayBar();
   }
@@ -618,6 +783,50 @@
         }
     });
     document.getElementById('flashSubjectList').innerHTML = listHtml;
+    renderFlashMonthChart();
+  }
+
+  // --- GRÁFICO MENSAL DE FLASHCARDS (todos os meses com dados) ---
+  function renderFlashMonthChart() {
+    const chartEl = document.getElementById('flashMonthChart');
+    const totalEl = document.getElementById('flashMonthTotal');
+    if(!chartEl) return;
+
+    // Varre todas as chaves tatico_AAAA-MM-DD_flashcards e soma por mês
+    const porMes = {}; // "AAAA-MM" -> total
+    Object.keys(db).forEach(k => {
+      const m = k.match(/^tatico_(\d{4})-(\d{2})-\d{2}_flashcards$/);
+      if(m) {
+        const chaveMs = `${m[1]}-${m[2]}`;
+        const val = parseInt(db[k]) || 0;
+        porMes[chaveMs] = (porMes[chaveMs] || 0) + val;
+      }
+    });
+
+    const chaves = Object.keys(porMes).sort(); // ordem cronológica
+    if(!chaves.length) {
+      chartEl.innerHTML = '<span style="color:#64748b;font-size:0.8rem;font-style:italic;margin:auto">Nenhum flashcard registrado ainda.</span>';
+      totalEl.innerHTML = '';
+      return;
+    }
+
+    const maxVal = Math.max(...chaves.map(k => porMes[k]), 1);
+    let totalGeral = 0;
+
+    chartEl.innerHTML = chaves.map(chave => {
+      const [ano, mes] = chave.split('-');
+      const val = porMes[chave];
+      totalGeral += val;
+      const heightPct = (val / maxVal) * 100;
+      const label = MONTH_NAMES_PT[parseInt(mes)-1].slice(0,3) + '/' + ano.slice(2);
+      return `<div class="flash-month-bar-wrapper">
+        <div class="flash-month-val">${val}</div>
+        <div class="flash-month-bar" style="height:${heightPct}%"></div>
+        <div class="flash-month-label">${label}</div>
+      </div>`;
+    }).join('');
+
+    totalEl.innerHTML = `Total geral: <b>${totalGeral}</b> flashcards estudados`;
   }
 
   // --- ANOTAÇÕES E EXCLUSÃO DE MISSÕES ---
@@ -881,7 +1090,7 @@
     });
   }
 
-  // Inicialização — carrega do JSONBin antes de renderizar
+  // Inicialização — carrega do Google Sheets antes de renderizar
   carregarBin().then(() => {
     renderEdital();
     buildDayBar();
@@ -891,6 +1100,10 @@
     renderChart();
     renderGlobalProgress();
     updateCountdown();
+    renderExamInfo();
+    pomoCiclos = parseInt(lsGet(sKey(todayDate,'pomo_ciclos')) || 0);
+    renderPomoCycles();
+    renderPomodoro();
   });
   // Auto-reload a cada 2 minutos
   setInterval(() => carregarBin().then(() => {
