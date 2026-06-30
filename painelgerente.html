@@ -360,6 +360,7 @@
       <div class="topbar-date" id="topbar-date"></div>
     </div>
     <div class="topbar-right">
+      <span id="syncBadge" style="background:var(--surface2);color:var(--text3);font-size:0.72rem;font-weight:700;padding:5px 12px;border-radius:99px;border:1px solid var(--border)">⏳ Carregando...</span>
       <button class="today-btn" onclick="goToday()">📌 Hoje</button>
     </div>
   </header>
@@ -716,10 +717,65 @@ const JULIO = {
 };
 
 // ============================================================
-//  STORAGE
+//  GOOGLE SHEETS SYNC
 // ============================================================
-function load(key, fb) { try{ const v=localStorage.getItem(key); return v?JSON.parse(v):fb; }catch{return fb;} }
-function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch{} }
+const API_URL = 'https://script.google.com/macros/s/AKfycbwdqhSwjgUa-SwKulcWZG-lXMS6wAIRSeGkwAx9I2PzNjAK__8Tru-iBY2DQVJf6dKt/exec';
+
+let db = {};
+let syncTimer = null;
+
+function load(key, fb) {
+  try {
+    const v = db[key];
+    return v !== undefined ? JSON.parse(v) : fb;
+  } catch { return fb; }
+}
+function save(key, val) {
+  try {
+    db[key] = JSON.stringify(val);
+    agendarSync();
+  } catch {}
+}
+function removeKey(key) {
+  delete db[key];
+  agendarSync();
+}
+
+function agendarSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(salvarSheets, 1500);
+}
+
+async function salvarSheets() {
+  try {
+    setSyncBadge('⏳ Salvando...');
+    await fetch(API_URL, { method: 'POST', body: JSON.stringify(db) });
+    setSyncBadge('✅ Sync');
+    localStorage.setItem('maqui_backup', JSON.stringify(db));
+  } catch(e) {
+    setSyncBadge('⚠️ Offline');
+  }
+}
+
+async function carregarSheets() {
+  setSyncBadge('⏳ Carregando...');
+  try {
+    const res = await fetch(API_URL);
+    if(!res.ok) throw new Error(res.status);
+    db = await res.json();
+    setSyncBadge('✅ Sync');
+    localStorage.setItem('maqui_backup', JSON.stringify(db));
+  } catch(e) {
+    const bkp = localStorage.getItem('maqui_backup');
+    if(bkp) db = JSON.parse(bkp);
+    setSyncBadge('⚠️ Offline');
+  }
+}
+
+function setSyncBadge(txt) {
+  const el = document.getElementById('syncBadge');
+  if(el) el.textContent = txt;
+}
 
 // ============================================================
 //  DATE UTILS
@@ -926,7 +982,7 @@ let editingKey = null;
 function initJulyData(){
   for(let d=1;d<=31;d++){
     const key=`maqui_cal_2026_7_${d}`;
-    if(localStorage.getItem(key)!==null) continue; // already set, skip
+    if(db[key]!==undefined) continue; // already set, skip
     const info=JULIO[d];
     if(!info) continue;
     const data={};
@@ -1037,7 +1093,7 @@ function saveModalDay(){
 function clearDayModal(){
   if(!editingKey) return;
   if(!confirm('Limpar todos os dados deste dia?')) return;
-  localStorage.removeItem(editingKey);
+  removeKey(editingKey);
   closeModal(); renderCalendar();
 }
 
@@ -1156,7 +1212,7 @@ function deleteConsultant(id){
   let list = getConsultants();
   list = list.filter(c=>c.id!==id);
   saveConsultants(list);
-  localStorage.removeItem('maqui_stars_'+id);
+  removeKey('maqui_stars_'+id);
   renderConsultants();
   populateFEFilters();
 }
@@ -1269,19 +1325,31 @@ function shake(id){
 //  INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', ()=>{
-  initTopbar();
-  document.getElementById('rem-date').value=todayStr();
-  document.getElementById('fe-date').value=todayStr();
-  document.getElementById('notes-date').value=todayStr();
+  carregarSheets().then(() => {
+    initTopbar();
+    document.getElementById('rem-date').value=todayStr();
+    document.getElementById('fe-date').value=todayStr();
+    document.getElementById('notes-date').value=todayStr();
 
-  renderTodayBanner();
-  renderReminders();
-  updateBadge();
-  renderTodos();
-  setNotesToday();
-  populateFEFilters();
-  initJulyData();
-  renderCalendar();
+    renderTodayBanner();
+    renderReminders();
+    updateBadge();
+    renderTodos();
+    setNotesToday();
+    populateFEFilters();
+    initJulyData();
+    renderCalendar();
+
+    // Auto-reload a cada 2 minutos
+    setInterval(() => carregarSheets().then(() => {
+      renderTodayBanner();
+      renderReminders();
+      updateBadge();
+      renderTodos();
+      populateFEFilters();
+      renderCalendar();
+    }), 120000);
+  });
 
   document.getElementById('modal-overlay').addEventListener('click', function(e){ if(e.target===this)closeModal(); });
   document.getElementById('modal-consultant').addEventListener('click', function(e){ if(e.target===this)closeConsultantModal(); });
