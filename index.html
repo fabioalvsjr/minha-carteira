@@ -21,12 +21,13 @@ body{background:#f0f4f8;font-family:'Inter',sans-serif;min-height:100vh;color:#1
 .sync-loading{background:rgba(251,191,36,0.25);color:#fde68a}
 .saldo-label{font-size:0.8rem;color:rgba(255,255,255,0.7);margin-bottom:4px;font-weight:500}
 .saldo-valor{font-family:'Poppins',sans-serif;font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:1.2rem}
-.top-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.top-card{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border-radius:14px;padding:12px 14px;border:1px solid rgba(255,255,255,0.2)}
-.top-card .tc-label{font-size:0.72rem;color:rgba(255,255,255,0.75);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.top-card .tc-val{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;color:#fff}
+.top-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.top-card{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border-radius:14px;padding:10px 10px;border:1px solid rgba(255,255,255,0.2)}
+.top-card .tc-label{font-size:0.66rem;color:rgba(255,255,255,0.75);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-card .tc-val{font-family:'Poppins',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top-card.danger .tc-val{color:#fca5a5}
 .top-card.safe .tc-val{color:#a7f3d0}
+.top-card.info .tc-val{color:#93c5fd}
 .content{padding:0 1rem;margin-top:-2rem;position:relative;z-index:2;max-width:680px;margin-left:auto;margin-right:auto}
 .tabs{display:flex;gap:0;background:#fff;border-radius:14px;padding:5px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:1.2rem}
 .tab-btn{flex:1;padding:9px 6px;border:none;border-radius:10px;background:transparent;font-family:'Inter';font-size:0.82rem;font-weight:600;color:#94a3b8;cursor:pointer;transition:all .2s}
@@ -92,10 +93,36 @@ input:focus{outline:none;border-color:#1a56db;background:#fff}
 .share-link{font-size:0.75rem;color:#1a56db;word-break:break-all;background:#fff;padding:8px 10px;border-radius:8px;border:1px solid #bfdbfe;margin-top:8px;display:block}
 .link-btn{background:none;border:none;color:#94a3b8;font-size:0.75rem;font-family:'Inter';cursor:pointer;text-decoration:underline;margin-top:8px}
 .link-btn:hover{color:#ef4444}
+.card-cartao-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-cartao-sub{font-size:0.75rem;color:#94a3b8;font-weight:500;margin-top:1px}
+.fatura-card{margin-bottom:10px}
+.fatura-top{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:12px;cursor:pointer}
+.fatura-top.aberta{background:linear-gradient(135deg,#eff6ff,#e0e7ff);border:1.5px solid #93c5fd}
+.fatura-top.fechada{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #fcd34d}
+.fatura-top.antiga{background:#f8fafc;border:1.5px solid #e2e8f0}
+.fi-label{font-size:0.82rem;font-weight:700;color:#1e293b;display:flex;align-items:center}
+.fi-venc{font-size:0.75rem;color:#64748b;margin-top:3px}
+.fatura-val{font-family:'Poppins';font-size:1.05rem;font-weight:800;color:#1e293b}
+.fatura-badge{font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:7px;text-transform:uppercase}
+.badge-aberta{background:#dbeafe;color:#1e40af}
+.badge-fechada{background:#fef3c7;color:#92400e}
+.badge-antiga{background:#e2e8f0;color:#64748b}
+.fatura-items{display:none;padding-top:8px}
+.fatura-items.show{display:flex}
+.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.resumo-item{background:#f8fafc;border-radius:12px;padding:12px 14px;border:1px solid #f1f5f9}
+.resumo-item .ri-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#94a3b8;margin-bottom:4px}
+.resumo-item .ri-val{font-family:'Poppins';font-size:1.15rem;font-weight:800;color:#1e293b}
+.resumo-item.fixo .ri-val{color:#d97706}
+.resumo-item.variavel .ri-val{color:#7e3af2}
+.resumo-item.fatura .ri-val{color:#1a56db}
+.resumo-total{background:linear-gradient(135deg,#1a56db,#7e3af2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.resumo-total .rt-label{color:rgba(255,255,255,.85);font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.resumo-total .rt-val{font-family:'Poppins';font-size:1.5rem;font-weight:800;color:#fff}
 .hidden{display:none!important}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
-@media(max-width:420px){.saldo-valor{font-size:2rem}.top-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.saldo-valor{font-size:2rem}.top-card{padding:8px 8px}.top-card .tc-val{font-size:0.92rem}.top-card .tc-label{font-size:0.6rem}}
 </style>
 </head>
 <body>
@@ -120,6 +147,10 @@ input:focus{outline:none;border-color:#1a56db;background:#fff}
         <div class="tc-label">Variáveis</div>
         <div class="tc-val" id="tcVariavel">R$ 0,00</div>
       </div>
+      <div class="top-card info">
+        <div class="tc-label">Faturas</div>
+        <div class="tc-val" id="tcFaturas">R$ 0,00</div>
+      </div>
     </div>
   </div>
 </div>
@@ -129,6 +160,7 @@ input:focus{outline:none;border-color:#1a56db;background:#fff}
     <button class="tab-btn active" onclick="mudarTab('lancar',this)">➕ Lançar</button>
     <button class="tab-btn" onclick="mudarTab('fixos',this)">🏠 Fixos</button>
     <button class="tab-btn" onclick="mudarTab('historico',this)">📋 Histórico</button>
+    <button class="tab-btn" onclick="mudarTab('cartoes',this)">💳 Cartões</button>
     <button class="tab-btn" onclick="mudarTab('extrato',this)">🗓️ Extrato</button>
     <button class="tab-btn" onclick="mudarTab('compartilhar',this)">🔗 Sync</button>
   </div>
@@ -215,6 +247,33 @@ input:focus{outline:none;border-color:#1a56db;background:#fff}
     </div>
   </div>
 
+  <!-- TAB: CARTÕES -->
+  <div class="tab-panel" id="tab-cartoes">
+    <div class="card">
+      <div class="card-title">📊 Resumo do Mês</div>
+      <select class="mes-select" id="selectMesResumo" onchange="renderizarResumoMes()"></select>
+      <div class="resumo-grid">
+        <div class="resumo-item fatura" style="grid-column:1/-1">
+          <div class="ri-label">💳 Total de todas as faturas</div>
+          <div class="ri-val" id="resumoFaturas">R$ 0,00</div>
+        </div>
+        <div class="resumo-item fixo" style="grid-column:1/-1">
+          <div class="ri-label">🏠 Fixos</div>
+          <div class="ri-val" id="resumoFixo">R$ 0,00</div>
+        </div>
+      </div>
+      <div class="resumo-total">
+        <span class="rt-label">Total a pagar</span>
+        <span class="rt-val" id="resumoTotal">R$ 0,00</span>
+      </div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">💳</span>
+      <span class="tip-text"><strong>Faturas calculadas automaticamente.</strong> Cada compra no crédito é encaixada na fatura certa com base no dia de fechamento do cartão. Toque numa fatura para ver os itens.</span>
+    </div>
+    <div id="listaCartoes"></div>
+  </div>
+
   <!-- TAB: EXTRATO -->
   <div class="tab-panel" id="tab-extrato">
     <div class="card">
@@ -278,6 +337,159 @@ let pagamentoSelecionado = null;
 let cartaoSelecionado = null;
 let filtroAtivo = 'todos';
 let saving = false;
+
+// ─── CARTÕES DE CRÉDITO ────────────────────────────────────────────────────────
+const CARTOES = {
+  'Banco Inter':  { icone: '🟠', fecha: 6,  vence: 12 },
+  'Itaú Visa':    { icone: '🔷', fecha: 8,  vence: 15 },
+  'Itaú Master':  { icone: '🔵', fecha: 3,  vence: 10 },
+  'Mercado Pago': { icone: '🟡', fecha: 9,  vence: 14 },
+};
+
+// Dado o timestamp de uma compra e o dia de fechamento do cartão, retorna o
+// mês/ano (competência) da fatura em que a compra vai entrar. Se a compra foi
+// feita depois do fechamento, ela cai na fatura do mês seguinte.
+function competenciaFatura(timestamp, diaFechamento) {
+  const d = new Date(timestamp);
+  let ano = d.getFullYear(), mes = d.getMonth();
+  if (d.getDate() > diaFechamento) {
+    mes += 1;
+    if (mes > 11) { mes = 0; ano += 1; }
+  }
+  return { ano, mes };
+}
+
+function fmtDia(d) { return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }); }
+
+function toggleFatura(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+// Reúne todas as chaves "ano-mes" relevantes: mês atual, mês calendário de
+// cada gasto diário, e a competência (mês de fechamento) de cada compra no crédito.
+function todasChavesMes() {
+  const hoje = new Date();
+  const set = new Set([`${hoje.getFullYear()}-${hoje.getMonth()}`]);
+  gastosDiarios.forEach(g => {
+    const d = new Date(g.timestamp);
+    set.add(`${d.getFullYear()}-${d.getMonth()}`);
+    if (g.pagamento === 'credito' && g.cartao && CARTOES[g.cartao]) {
+      const { ano, mes } = competenciaFatura(g.timestamp, CARTOES[g.cartao].fecha);
+      set.add(`${ano}-${mes}`);
+    }
+  });
+  return [...set];
+}
+
+function popularSelectMesResumo() {
+  const sel = document.getElementById('selectMesResumo');
+  if (!sel) return;
+  const valorAntes = sel.value;
+  const agora = new Date();
+  const ordenados = todasChavesMes().sort((a, b) => {
+    const [ay, am] = a.split('-').map(Number), [by, bm] = b.split('-').map(Number);
+    return (by * 12 + bm) - (ay * 12 + am);
+  });
+  sel.innerHTML = '';
+  ordenados.forEach(k => {
+    const [ano, mes] = k.split('-').map(Number);
+    const opt = document.createElement('option');
+    opt.value = k; opt.textContent = `${MESES[mes]} de ${ano}`;
+    if (k === valorAntes) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  if (!valorAntes) sel.value = `${agora.getFullYear()}-${agora.getMonth()}`;
+}
+
+// Fixos + total de todas as faturas de cartão que fecham naquele mês.
+function renderizarResumoMes() {
+  const sel = document.getElementById('selectMesResumo');
+  if (!sel || !sel.value) return;
+  const [ano, mes] = sel.value.split('-').map(Number);
+
+  const totalFixo = gastosMensais.reduce((s, g) => s + g.val, 0);
+
+  const totalFaturas = gastosDiarios.filter(g => {
+    if (g.pagamento !== 'credito' || !g.cartao || !CARTOES[g.cartao]) return false;
+    const { ano: a, mes: m } = competenciaFatura(g.timestamp, CARTOES[g.cartao].fecha);
+    return a === ano && m === mes;
+  }).reduce((s, g) => s + g.val, 0);
+
+  document.getElementById('resumoFixo').textContent = fmt(totalFixo);
+  document.getElementById('resumoFaturas').textContent = fmt(totalFaturas);
+  document.getElementById('resumoTotal').textContent = fmt(totalFixo + totalFaturas);
+}
+
+function renderizarCartoes() {
+  popularSelectMesResumo();
+  renderizarResumoMes();
+
+  const hoje = new Date();
+  const wrap = document.getElementById('listaCartoes');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  Object.keys(CARTOES).forEach(nomeCartao => {
+    const cfg = CARTOES[nomeCartao];
+    const compras = gastosDiarios.filter(g => g.pagamento === 'credito' && g.cartao === nomeCartao);
+
+    const grupos = {};
+    compras.forEach(g => {
+      const { ano, mes } = competenciaFatura(g.timestamp, cfg.fecha);
+      const k = `${ano}-${mes}`;
+      if (!grupos[k]) grupos[k] = { ano, mes, itens: [] };
+      grupos[k].itens.push(g);
+    });
+
+    const chaves = Object.keys(grupos).sort((a, b) => {
+      const [ay, am] = a.split('-').map(Number), [by, bm] = b.split('-').map(Number);
+      return (by * 12 + bm) - (ay * 12 + am);
+    });
+
+    let html = `<div class="card">
+      <div class="card-cartao-head">
+        <span style="font-size:1.4rem">${cfg.icone}</span>
+        <div>
+          <div class="card-title" style="margin-bottom:0">${nomeCartao}</div>
+          <div class="card-cartao-sub">Fecha dia ${cfg.fecha} · Vence dia ${cfg.vence}</div>
+        </div>
+      </div>`;
+
+    if (!chaves.length) {
+      html += vazio('Nenhuma compra no crédito ainda.');
+    } else {
+      chaves.forEach((k, idx) => {
+        const grupo = grupos[k];
+        const total = grupo.itens.reduce((s, g) => s + g.val, 0);
+        const fechamentoDate = new Date(grupo.ano, grupo.mes, cfg.fecha);
+        const vencimentoDate = new Date(grupo.ano, grupo.mes, cfg.vence);
+
+        let status = 'antiga', badge = 'badge-antiga', badgeTxt = 'Paga';
+        if (fechamentoDate >= hoje) { status = 'aberta'; badge = 'badge-aberta'; badgeTxt = 'Aberta'; }
+        else if (vencimentoDate >= hoje) { status = 'fechada'; badge = 'badge-fechada'; badgeTxt = 'Fechada'; }
+
+        const idFat = `fat-${nomeCartao.replace(/\s/g, '')}-${k}`;
+        const itensOrdenados = [...grupo.itens].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        html += `<div class="fatura-card">
+          <div class="fatura-top ${status}" onclick="toggleFatura('${idFat}')">
+            <div>
+              <div class="fi-label">${MESES[grupo.mes]} ${grupo.ano}<span class="fatura-badge ${badge}">${badgeTxt}</span></div>
+              <div class="fi-venc">Fecha ${fmtDia(fechamentoDate)} · Vence ${fmtDia(vencimentoDate)}</div>
+            </div>
+            <span class="fatura-val">${fmt(total)}</span>
+          </div>
+          <div class="fatura-items item-list${idx === 0 ? ' show' : ''}" id="${idFat}">
+            ${itensOrdenados.map(g => itemHtml(g, 'diario', true)).join('')}
+          </div>
+        </div>`;
+      });
+    }
+
+    html += `</div>`;
+    wrap.innerHTML += html;
+  });
+}
 
 // ─── SHEETS: LER ─────────────────────────────────────────────────────────────
 async function carregarDrive(manual = false) {
@@ -474,6 +686,15 @@ function renderizarTudo() {
   document.getElementById('totalHoje').textContent = fmt(totalHoje);
 
   renderizarHistorico(gastosMes);
+  renderizarCartoes();
+
+  const totalFaturasMes = gastosDiarios.filter(g => {
+    if (g.pagamento !== 'credito' || !g.cartao || !CARTOES[g.cartao]) return false;
+    const { ano: a, mes: m } = competenciaFatura(g.timestamp, CARTOES[g.cartao].fecha);
+    return a === anoAtual && m === mesAtual;
+  }).reduce((s, g) => s + g.val, 0);
+  document.getElementById('tcFaturas').textContent = fmt(totalFaturasMes);
+
   document.getElementById('tcFixo').textContent = fmt(totalFixo);
   document.getElementById('tcVariavel').textContent = fmt(totalVariavel);
   document.getElementById('saldoTotal').textContent = fmt(totalFixo+totalVariavel);
